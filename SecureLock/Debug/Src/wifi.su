@@ -1,0 +1,13 @@
+../Src/wifi.c:7:6:WIFI_Init	8	static
+../Src/wifi.c:28:6:WIFI_SendChar	16	static
+../Src/wifi.c:36:6:WIFI_ReceiveChar	4	static
+../Src/wifi.c:44:6:WIFI_SendString	16	static
+../Src/wifi.c:50:5:WIFI_SendCommand	48	static
+../Src/wifi.c:79:6:WIFI_SendLog	184	static
+../Src/wifi.c:103:6:WIFI_SendEncryptedLog	88	static
+../Src/wifi.c:124:9:WIFI_HasCommand	4	static
+../Src/wifi.c:128:6:WIFI_GetCommand	32	static
+../Src/wifi.c:159:6:WIFI_ConnectToAP	152	static
+../Src/wifi.c:165:9:WIFI_IsConnected	8	static
+../Src/wifi.c:173:6:WIFI_EnableServerMode	48	static
+../Src/wifi.c:179:6:WIFI_DisableServerMode	8	static

@@ -1,0 +1,10 @@
+#ifndef MAIN_H
+#define MAIN_H
+
+// Function prototypes
+void SystemClock_Config(void);
+void GPIO_Init(void);
+void GrantAccess(void);
+void DenyAccess(void);
+
+#endif // MAIN_H

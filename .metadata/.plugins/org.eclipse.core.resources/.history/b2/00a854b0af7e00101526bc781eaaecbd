@@ -1,0 +1,13 @@
+/*
+ * stm32f407xx_registers.h
+ *
+ *  Created on: Aug 21, 2025
+ *      Author: PC
+ */
+
+#ifndef STM32F407XX_REGISTERS_H_
+#define STM32F407XX_REGISTERS_H_
+
+
+
+#endif /* STM32F407XX_REGISTERS_H_ */

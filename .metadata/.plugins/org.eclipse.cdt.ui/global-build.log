@@ -1,0 +1,1037 @@
+10:12:41 **** Clean-only build of configuration Debug for project test ****
+make -j4 clean 
+rm -rf ./Startup/startup_stm32f407vgtx.d ./Startup/startup_stm32f407vgtx.o
+rm -rf ./Src/main.cyclo ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+rm -rf default.size.stdout test.elf test.list test.map
+ 
+10:12:48 **** Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f407vgtx.d" -MT"Startup/startup_stm32f407vgtx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f407vgtx.o" "../Startup/startup_stm32f407vgtx.s"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I"D:/Embedded C/My_Workspace/Target/test/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I"D:/Embedded C/My_Workspace/Target/test/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I"D:/Embedded C/My_Workspace/Target/test/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc -o "test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\test\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: test.elf
+ 
+arm-none-eabi-size  test.elf 
+arm-none-eabi-objdump -h -S test.elf  > "test.list"
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+Finished building: test.list
+ 
+22:23:46 **** Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f407vgtx.d" -MT"Startup/startup_stm32f407vgtx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Startup/startup_stm32f407vgtx.o" "../Startup/startup_stm32f407vgtx.s"
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/syscalls.o"
+../Src/main.c:22:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   22 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SecureLock.elf
+ 
+arm-none-eabi-size  SecureLock.elf 
+arm-none-eabi-objdump -h -S SecureLock.elf  > "SecureLock.list"
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	SecureLock.elf
+Finished building: default.size.stdout
+ 
+Finished building: SecureLock.list
+ 
+22:25:49 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f407vgtx.d" -MT"Startup/startup_stm32f407vgtx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f407vgtx.o" "../Startup/startup_stm32f407vgtx.s"
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+../Src/keypad.c: In function 'Keypad_GetKey':
+../Src/keypad.c:33:17: warning: implicit declaration of function 'delay_ms' [-Wimplicit-function-declaration]
+   33 |                 delay_ms(20);
+      |                 ^~~~~~~~
+../Src/keypad.c: In function 'Keypad_GetPIN':
+../Src/keypad.c:51:27: warning: implicit declaration of function 'get_tick_count' [-Wimplicit-function-declaration]
+   51 |     uint32_t start_time = get_tick_count();
+      |                           ^~~~~~~~~~~~~~
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SecureLock.elf
+ 
+arm-none-eabi-size  SecureLock.elf 
+arm-none-eabi-objdump -h -S SecureLock.elf  > "SecureLock.list"
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	SecureLock.elf
+Finished building: default.size.stdout
+ 
+Finished building: SecureLock.list
+ 
+22:25:53 **** Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f407vgtx.d" -MT"Startup/startup_stm32f407vgtx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f407vgtx.o" "../Startup/startup_stm32f407vgtx.s"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc -o "mx_test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\mx_test\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="mx_test.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: mx_test.elf
+ 
+arm-none-eabi-size  mx_test.elf 
+arm-none-eabi-objdump -h -S mx_test.elf  > "mx_test.list"
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+Finished building: mx_test.list
+ 
+22:25:55 **** Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+22:25:55 **** Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I"D:/Embedded C/My_Workspace/Target/test/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\test\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: test.elf
+ 
+arm-none-eabi-size  test.elf 
+arm-none-eabi-objdump -h -S test.elf  > "test.list"
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+Finished building: test.list
+ 
+22:33:07 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+../Src/keypad.c: In function 'Keypad_GetKey':
+../Src/keypad.c:33:17: warning: implicit declaration of function 'delay_ms' [-Wimplicit-function-declaration]
+   33 |                 delay_ms(20);
+      |                 ^~~~~~~~
+../Src/keypad.c: In function 'Keypad_GetPIN':
+../Src/keypad.c:51:27: warning: implicit declaration of function 'get_tick_count' [-Wimplicit-function-declaration]
+   51 |     uint32_t start_time = get_tick_count();
+      |                           ^~~~~~~~~~~~~~
+arm-none-eabi-gcc "../Src/utils.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/utils.d" -MT"Src/utils.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/utils.o"
+../Src/utils.c: In function 'led_on':
+../Src/utils.c:337:13: warning: implicit declaration of function 'GPIO_SetPin' [-Wimplicit-function-declaration]
+  337 |             GPIO_SetPin(GPIOD, LED_GREEN_PIN);
+      |             ^~~~~~~~~~~
+../Src/utils.c: In function 'led_off':
+../Src/utils.c:354:13: warning: implicit declaration of function 'GPIO_ResetPin' [-Wimplicit-function-declaration]
+  354 |             GPIO_ResetPin(GPIOD, LED_GREEN_PIN);
+      |             ^~~~~~~~~~~~~
+../Src/utils.c: In function 'led_toggle':
+../Src/utils.c:371:13: warning: implicit declaration of function 'GPIO_TogglePin' [-Wimplicit-function-declaration]
+  371 |             GPIO_TogglePin(GPIOD, LED_GREEN_PIN);
+      |             ^~~~~~~~~~~~~~
+../Src/utils.c: In function 'led_blink':
+../Src/utils.c:389:9: error: called object 'delay_ms' is not a function or function pointer
+  389 |         delay_ms(delay_ms);
+      |         ^~~~~~~~
+../Src/utils.c:386:38: note: declared here
+  386 | void led_blink(uint8_t led, uint32_t delay_ms, uint8_t count) {
+      |                             ~~~~~~~~~^~~~~~~~
+../Src/utils.c:392:13: error: called object 'delay_ms' is not a function or function pointer
+  392 |             delay_ms(delay_ms);
+      |             ^~~~~~~~
+../Src/utils.c:386:38: note: declared here
+  386 | void led_blink(uint8_t led, uint32_t delay_ms, uint8_t count) {
+      |                             ~~~~~~~~~^~~~~~~~
+make: *** [Src/subdir.mk:31: Src/utils.o] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+22:33:08 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+22:33:09 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+22:33:09 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+22:47:40 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/utils.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/utils.d" -MT"Src/utils.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/utils.o"
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SecureLock.elf
+ 
+arm-none-eabi-size  SecureLock.elf 
+arm-none-eabi-objdump -h -S SecureLock.elf  > "SecureLock.list"
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	SecureLock.elf
+Finished building: default.size.stdout
+ 
+Finished building: SecureLock.list
+ 
+22:47:42 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+22:47:42 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+22:47:43 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+22:52:33 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+../Src/rfid.c: In function 'RFID_Init':
+../Src/rfid.c:7:5: error: 'RCC_APB2ENR' undeclared (first use in this function)
+    7 |     RCC_APB2ENR |= (1 << 12);
+      |     ^~~~~~~~~~~
+../Src/rfid.c:7:5: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [Src/subdir.mk:37: Src/rfid.o] Error 1
+make: *** Waiting for unfinished jobs....
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+22:52:34 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+22:52:34 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+22:52:35 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+22:54:09 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc "../Src/utils.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/utils.d" -MT"Src/utils.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/utils.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+../Src/rfid.c: In function 'RFID_Init':
+../Src/rfid.c:7:5: error: 'RCC_APB2ENR' undeclared (first use in this function)
+    7 |     RCC_APB2ENR |= (1 << 12);
+      |     ^~~~~~~~~~~
+../Src/rfid.c:7:5: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [Src/subdir.mk:37: Src/rfid.o] Error 1
+make: *** Waiting for unfinished jobs....
+../Src/wifi.c: In function 'WIFI_Init':
+../Src/wifi.c:7:5: error: 'RCC_APB1ENR' undeclared (first use in this function)
+    7 |     RCC_APB1ENR |= (1 << 17);
+      |     ^~~~~~~~~~~
+../Src/wifi.c:7:5: note: each undeclared identifier is reported only once for each function it appears in
+../Src/wifi.c: In function 'WIFI_SendLog':
+../Src/wifi.c:53:5: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+   53 |     snprintf(buffer, sizeof(buffer), "AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80\r\n");
+      |     ^~~~~~~~
+../Src/wifi.c:4:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    3 | #include "utils.h"
+  +++ |+#include <stdio.h>
+    4 | 
+../Src/wifi.c:53:5: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+   53 |     snprintf(buffer, sizeof(buffer), "AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80\r\n");
+      |     ^~~~~~~~
+../Src/wifi.c:53:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+make: *** [Src/subdir.mk:37: Src/wifi.o] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+22:54:10 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+22:54:11 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+22:54:11 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+22:57:59 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+../Src/rfid.c: In function 'RFID_Init':
+../Src/rfid.c:7:5: error: 'RCC_APB2ENR' undeclared (first use in this function)
+    7 |     RCC_APB2ENR |= (1 << 12);
+      |     ^~~~~~~~~~~
+../Src/rfid.c:7:5: note: each undeclared identifier is reported only once for each function it appears in
+../Src/wifi.c: In function 'WIFI_Init':
+../Src/wifi.c:7:5: error: 'RCC_APB1ENR' undeclared (first use in this function)
+    7 |     RCC_APB1ENR |= (1 << 17);
+      |     ^~~~~~~~~~~
+../Src/wifi.c:7:5: note: each undeclared identifier is reported only once for each function it appears in
+../Src/wifi.c: In function 'WIFI_SendLog':
+../Src/wifi.c:54:5: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+   54 |     snprintf(buffer, sizeof(buffer), "AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80\r\n");
+      |     ^~~~~~~~
+../Src/wifi.c:4:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    3 | #include "utils.h"
+  +++ |+#include <stdio.h>
+    4 | 
+../Src/wifi.c:54:5: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+   54 |     snprintf(buffer, sizeof(buffer), "AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80\r\n");
+      |     ^~~~~~~~
+../Src/wifi.c:54:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+make: *** [Src/subdir.mk:37: Src/rfid.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [Src/subdir.mk:37: Src/wifi.o] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+22:58:00 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+22:58:00 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+22:58:01 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+23:01:17 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+../Src/rfid.c: In function 'RFID_Init':
+../Src/rfid.c:83:24: error: 'MFRC522_T_MODE_REG' undeclared (first use in this function); did you mean 'MFRC522_CMD_REG'?
+   83 |     RFID_WriteRegister(MFRC522_T_MODE_REG, 0x8D);
+      |                        ^~~~~~~~~~~~~~~~~~
+      |                        MFRC522_CMD_REG
+../Src/rfid.c:83:24: note: each undeclared identifier is reported only once for each function it appears in
+../Src/rfid.c:84:24: error: 'MFRC522_T_PRESCALER_REG' undeclared (first use in this function)
+   84 |     RFID_WriteRegister(MFRC522_T_PRESCALER_REG, 0x3E);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~
+../Src/rfid.c:85:24: error: 'MFRC522_T_RELOAD_L_REG' undeclared (first use in this function)
+   85 |     RFID_WriteRegister(MFRC522_T_RELOAD_L_REG, 0x1E);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../Src/rfid.c:86:24: error: 'MFRC522_T_RELOAD_H_REG' undeclared (first use in this function)
+   86 |     RFID_WriteRegister(MFRC522_T_RELOAD_H_REG, 0x00);
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../Src/rfid.c:87:24: error: 'MFRC522_TX_AUTO_REG' undeclared (first use in this function); did you mean 'MFRC522_STATUS1_REG'?
+   87 |     RFID_WriteRegister(MFRC522_TX_AUTO_REG, 0x40);
+      |                        ^~~~~~~~~~~~~~~~~~~
+      |                        MFRC522_STATUS1_REG
+../Src/rfid.c:88:24: error: 'MFRC522_MODE_REG' undeclared (first use in this function); did you mean 'MFRC522_COLL_REG'?
+   88 |     RFID_WriteRegister(MFRC522_MODE_REG, 0x3D);
+      |                        ^~~~~~~~~~~~~~~~
+      |                        MFRC522_COLL_REG
+../Src/rfid.c:91:39: error: 'MFRC522_TX_CONTROL_REG' undeclared (first use in this function); did you mean 'MFRC522_CONTROL_REG'?
+   91 |     uint8_t value = RFID_ReadRegister(MFRC522_TX_CONTROL_REG);
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~
+      |                                       MFRC522_CONTROL_REG
+../Src/rfid.c: In function 'RFID_CheckForCard':
+../Src/rfid.c:141:53: warning: passing argument 4 of 'RFID_TransceiveData' makes pointer from integer without a cast [-Wint-conversion]
+  141 |     status = RFID_TransceiveData(buffer, 2, buffer, sizeof(buffer), 0);
+      |                                                     ^~~~~~~~~~~~~~
+      |                                                     |
+      |                                                     unsigned int
+In file included from ../Src/rfid.c:1:
+../Inc/rfid.h:13:57: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'unsigned int'
+   13 |                            uint8_t *back_data, uint8_t *back_len,
+      |                                                ~~~~~~~~~^~~~~~~~
+../Src/rfid.c:151:53: warning: passing argument 4 of 'RFID_TransceiveData' makes pointer from integer without a cast [-Wint-conversion]
+  151 |     status = RFID_TransceiveData(buffer, 2, buffer, sizeof(buffer), uid);
+      |                                                     ^~~~~~~~~~~~~~
+      |                                                     |
+      |                                                     unsigned int
+In file included from ../Src/rfid.c:1:
+../Inc/rfid.h:13:57: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'unsigned int'
+   13 |                            uint8_t *back_data, uint8_t *back_len,
+      |                                                ~~~~~~~~~^~~~~~~~
+../Src/rfid.c: In function 'RFID_TransceiveData':
+../Src/rfid.c:169:13: warning: unused variable 'tmp' [-Wunused-variable]
+  169 |     uint8_t tmp;
+      |             ^~~
+../Src/rfid.c:167:13: warning: unused variable 'last_bits' [-Wunused-variable]
+  167 |     uint8_t last_bits;
+      |             ^~~~~~~~~
+../Src/rfid.c:166:13: warning: unused variable 'irq_en' [-Wunused-variable]
+  166 |     uint8_t irq_en = 0x00;
+      |             ^~~~~~
+../Src/rfid.c: In function 'RFID_CalculateCRC':
+../Src/rfid.c:252:35: error: 'MFRC522_CRC_RESULT_L_REG' undeclared (first use in this function)
+  252 |     result[0] = RFID_ReadRegister(MFRC522_CRC_RESULT_L_REG);
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/rfid.c:253:35: error: 'MFRC522_CRC_RESULT_H_REG' undeclared (first use in this function)
+  253 |     result[1] = RFID_ReadRegister(MFRC522_CRC_RESULT_H_REG);
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+../Src/rfid.c: In function 'RFID_IsNewCardPresent':
+../Src/rfid.c:263:52: warning: passing argument 4 of 'RFID_TransceiveData' makes pointer from integer without a cast [-Wint-conversion]
+  263 |     return (RFID_TransceiveData(buffer, 2, buffer, sizeof(buffer), 0) == 0x00);
+      |                                                    ^~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    unsigned int
+../Src/rfid.c:162:57: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'unsigned int'
+  162 |                            uint8_t *back_data, uint8_t *back_len,
+      |                                                ~~~~~~~~~^~~~~~~~
+make: *** [Src/subdir.mk:37: Src/rfid.o] Error 1
+make: *** Waiting for unfinished jobs....
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+23:01:18 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+23:01:19 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+23:01:19 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+23:22:57 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+../Src/rfid.c: In function 'RFID_TransceiveData':
+../Src/rfid.c:125:13: warning: unused variable 'irq_en' [-Wunused-variable]
+  125 |     uint8_t irq_en = 0x00;
+      |             ^~~~~~
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SecureLock.elf
+ 
+arm-none-eabi-size  SecureLock.elf 
+arm-none-eabi-objdump -h -S SecureLock.elf  > "SecureLock.list"
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	SecureLock.elf
+Finished building: default.size.stdout
+ 
+Finished building: SecureLock.list
+ 
+23:22:59 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+23:22:59 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+23:23:00 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+23:30:16 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/aes.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/aes.d" -MT"Src/aes.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/aes.o"
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+../Src/rfid.c: In function 'RFID_TransceiveData':
+../Src/rfid.c:125:13: warning: unused variable 'irq_en' [-Wunused-variable]
+  125 |     uint8_t irq_en = 0x00;
+      |             ^~~~~~
+arm-none-eabi-gcc "../Src/secure_lock.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/secure_lock.d" -MT"Src/secure_lock.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/secure_lock.o"
+arm-none-eabi-gcc "../Src/sha256.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sha256.d" -MT"Src/sha256.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sha256.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+../Src/sha256.c: In function 'sha256_update':
+../Src/sha256.c:60:9: warning: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   60 |         memcpy(ctx->buffer + left, data, fill);
+      |         ^~~~~~
+../Src/sha256.c:2:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+    1 | #include "sha256.h"
+  +++ |+#include <string.h>
+    2 | 
+../Src/sha256.c:60:9: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]
+   60 |         memcpy(ctx->buffer + left, data, fill);
+      |         ^~~~~~
+../Src/sha256.c:60:9: note: include '<string.h>' or provide a declaration of 'memcpy'
+../Src/sha256.c:70:14: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]
+   70 |     if (len) memcpy(ctx->buffer + left, data, len);
+      |              ^~~~~~
+../Src/sha256.c:70:14: note: include '<string.h>' or provide a declaration of 'memcpy'
+../Src/secure_lock.c: In function 'SecureLock_Init':
+../Src/secure_lock.c:43:5: warning: implicit declaration of function 'RFID_Init' [-Wimplicit-function-declaration]
+   43 |     RFID_Init();
+      |     ^~~~~~~~~
+../Src/secure_lock.c:44:5: warning: implicit declaration of function 'Keypad_Init' [-Wimplicit-function-declaration]
+   44 |     Keypad_Init();
+      |     ^~~~~~~~~~~
+../Src/secure_lock.c:45:5: warning: implicit declaration of function 'WIFI_Init' [-Wimplicit-function-declaration]
+   45 |     WIFI_Init();
+      |     ^~~~~~~~~
+../Src/secure_lock.c:49:5: warning: implicit declaration of function 'GPIO_Init' [-Wimplicit-function-declaration]
+   49 |     GPIO_Init();
+      |     ^~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_Run':
+../Src/secure_lock.c:78:9: warning: implicit declaration of function 'RFID_CheckForCard' [-Wimplicit-function-declaration]
+   78 |     if (RFID_CheckForCard(uid, &uid_size)) {
+      |         ^~~~~~~~~~~~~~~~~
+../Src/secure_lock.c:86:13: warning: implicit declaration of function 'Keypad_GetPIN' [-Wimplicit-function-declaration]
+   86 |         if (Keypad_GetPIN(pin, 4, 5000)) { // 5 second timeout for PIN entry
+      |             ^~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_ProcessPIN':
+../Src/secure_lock.c:113:59: warning: passing argument 2 of 'SecureLock_ValidatePIN' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  113 |     if (SecureLock_ValidatePIN(pin, users[current_user_id].pin_hash)) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+In file included from ../Src/secure_lock.c:1:
+../Inc/secure_lock.h:43:52: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'const uint8_t *' {aka 'const unsigned char *'}
+   43 | uint8_t SecureLock_ValidatePIN(char *pin, uint8_t *stored_hash);
+      |                                           ~~~~~~~~~^~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_LogAccess':
+../Src/secure_lock.c:196:9: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+  196 |         snprintf(log_message, sizeof(log_message), "System: %s", reason);
+      |         ^~~~~~~~
+../Src/secure_lock.c:7:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    6 | #include <string.h>
+  +++ |+#include <stdio.h>
+    7 | 
+../Src/secure_lock.c:196:9: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+  196 |         snprintf(log_message, sizeof(log_message), "System: %s", reason);
+      |         ^~~~~~~~
+../Src/secure_lock.c:196:9: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Src/secure_lock.c:198:9: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+  198 |         snprintf(log_message, sizeof(log_message), "User%d: %s - %s",
+      |         ^~~~~~~~
+../Src/secure_lock.c:198:9: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Src/secure_lock.c:206:5: warning: implicit declaration of function 'WIFI_SendEncryptedLog' [-Wimplicit-function-declaration]
+  206 |     WIFI_SendEncryptedLog(encrypted_message, strlen(log_message));
+      |     ^~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc "../Src/utils.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/utils.d" -MT"Src/utils.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/utils.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SecureLock.elf
+ 
+arm-none-eabi-size  SecureLock.elf 
+arm-none-eabi-objdump -h -S SecureLock.elf  > "SecureLock.list"
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	SecureLock.elf
+Finished building: default.size.stdout
+ 
+Finished building: SecureLock.list
+ 
+23:30:19 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+23:30:20 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+23:30:20 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+23:37:22 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-size  SecureLock.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	SecureLock.elf
+Finished building: default.size.stdout
+ 
+23:37:22 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+23:37:23 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+23:37:23 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+23:45:48 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+In file included from ../Src/main.c:4:
+../Inc/secure_lock.h:24:5: error: redeclaration of enumerator 'STATE_IDLE'
+   24 |     STATE_IDLE,
+      |     ^~~~~~~~~~
+In file included from ../Inc/main.h:4,
+                 from ../Src/main.c:1:
+../Inc/config.h:143:5: note: previous definition of 'STATE_IDLE' with type 'enum <anonymous>'
+  143 |     STATE_IDLE,
+      |     ^~~~~~~~~~
+In file included from ../Src/main.c:4:
+../Inc/secure_lock.h:27:5: error: redeclaration of enumerator 'STATE_ACCESS_GRANTED'
+   27 |     STATE_ACCESS_GRANTED,
+      |     ^~~~~~~~~~~~~~~~~~~~
+In file included from ../Inc/main.h:4,
+                 from ../Src/main.c:1:
+../Inc/config.h:147:5: note: previous definition of 'STATE_ACCESS_GRANTED' with type 'enum <anonymous>'
+  147 |     STATE_ACCESS_GRANTED,
+      |     ^~~~~~~~~~~~~~~~~~~~
+In file included from ../Src/main.c:4:
+../Inc/secure_lock.h:28:5: error: redeclaration of enumerator 'STATE_ACCESS_DENIED'
+   28 |     STATE_ACCESS_DENIED,
+      |     ^~~~~~~~~~~~~~~~~~~
+In file included from ../Inc/main.h:4,
+                 from ../Src/main.c:1:
+../Inc/config.h:148:5: note: previous definition of 'STATE_ACCESS_DENIED' with type 'enum <anonymous>'
+  148 |     STATE_ACCESS_DENIED,
+      |     ^~~~~~~~~~~~~~~~~~~
+In file included from ../Src/main.c:4:
+../Inc/secure_lock.h:29:5: error: redeclaration of enumerator 'STATE_LOCKOUT'
+   29 |     STATE_LOCKOUT
+      |     ^~~~~~~~~~~~~
+In file included from ../Inc/main.h:4,
+                 from ../Src/main.c:1:
+../Inc/config.h:149:5: note: previous definition of 'STATE_LOCKOUT' with type 'enum <anonymous>'
+  149 |     STATE_LOCKOUT,
+      |     ^~~~~~~~~~~~~
+../Src/main.c: In function 'SystemClock_Config':
+../Src/main.c:83:20: error: 'FLASH_ACR_LATENCY' undeclared (first use in this function)
+   83 |     FLASH->ACR &= ~FLASH_ACR_LATENCY;
+      |                    ^~~~~~~~~~~~~~~~~
+../Src/main.c:83:20: note: each undeclared identifier is reported only once for each function it appears in
+../Src/main.c:84:19: error: 'FLASH_ACR_LATENCY_0WS' undeclared (first use in this function)
+   84 |     FLASH->ACR |= FLASH_ACR_LATENCY_0WS;
+      |                   ^~~~~~~~~~~~~~~~~~~~~
+../Src/main.c:87:19: error: 'RCC_CFGR_SW' undeclared (first use in this function)
+   87 |     RCC->CFGR &= ~RCC_CFGR_SW;
+      |                   ^~~~~~~~~~~
+../Src/main.c:88:18: error: 'RCC_CFGR_SW_HSI' undeclared (first use in this function)
+   88 |     RCC->CFGR |= RCC_CFGR_SW_HSI;
+      |                  ^~~~~~~~~~~~~~~
+../Src/main.c:89:25: error: 'RCC_CFGR_SWS' undeclared (first use in this function)
+   89 |     while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI);
+      |                         ^~~~~~~~~~~~
+../Src/main.c:89:42: error: 'RCC_CFGR_SWS_HSI' undeclared (first use in this function)
+   89 |     while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI);
+      |                                          ^~~~~~~~~~~~~~~~
+../Src/main.c: In function 'System_Run':
+../Src/main.c:143:9: error: duplicate case value
+  143 |         case STATE_ACCESS_GRANTED:
+      |         ^~~~
+../Src/main.c:135:9: note: previously used here
+  135 |         case STATE_PIN_ENTRY:
+      |         ^~~~
+../Src/main.c:147:9: error: duplicate case value
+  147 |         case STATE_ACCESS_DENIED:
+      |         ^~~~
+../Src/main.c:139:9: note: previously used here
+  139 |         case STATE_AUTHENTICATING:
+      |         ^~~~
+../Src/main.c: In function 'System_ProcessCommands':
+../Src/main.c:336:13: warning: implicit declaration of function 'LOG_WARNING' [-Wimplicit-function-declaration]
+  336 |             LOG_WARNING("Unknown command: %s\n", command);
+      |             ^~~~~~~~~~~
+../Src/main.c: In function 'system_reset':
+../Src/main.c:417:5: warning: implicit declaration of function 'NVIC_SystemReset' [-Wimplicit-function-declaration]
+  417 |     NVIC_SystemReset();
+      |     ^~~~~~~~~~~~~~~~
+make: *** [Src/subdir.mk:46: Src/main.o] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+23:45:49 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+23:45:50 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+23:45:50 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+23:57:33 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/secure_lock.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/secure_lock.d" -MT"Src/secure_lock.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/secure_lock.o"
+../Src/secure_lock.c:26:8: error: unknown type name 'security_state_t'
+   26 | static security_state_t current_state = STATE_IDLE;
+      |        ^~~~~~~~~~~~~~~~
+../Src/secure_lock.c:26:41: error: 'STATE_IDLE' undeclared here (not in a function)
+   26 | static security_state_t current_state = STATE_IDLE;
+      |                                         ^~~~~~~~~~
+../Src/secure_lock.c:34:36: error: 'AES_KEY' undeclared here (not in a function)
+   34 | static const uint8_t aes_key[16] = AES_KEY;
+      |                                    ^~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_Init':
+../Src/secure_lock.c:43:5: warning: implicit declaration of function 'RFID_Init' [-Wimplicit-function-declaration]
+   43 |     RFID_Init();
+      |     ^~~~~~~~~
+../Src/secure_lock.c:44:5: warning: implicit declaration of function 'Keypad_Init' [-Wimplicit-function-declaration]
+   44 |     Keypad_Init();
+      |     ^~~~~~~~~~~
+../Src/secure_lock.c:45:5: warning: implicit declaration of function 'WIFI_Init' [-Wimplicit-function-declaration]
+   45 |     WIFI_Init();
+      |     ^~~~~~~~~
+../Src/secure_lock.c:49:5: warning: implicit declaration of function 'GPIO_Init' [-Wimplicit-function-declaration]
+   49 |     GPIO_Init();
+      |     ^~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_Run':
+../Src/secure_lock.c:58:26: error: 'STATE_LOCKOUT' undeclared (first use in this function)
+   58 |     if (current_state == STATE_LOCKOUT) {
+      |                          ^~~~~~~~~~~~~
+../Src/secure_lock.c:58:26: note: each undeclared identifier is reported only once for each function it appears in
+../Src/secure_lock.c:78:9: warning: implicit declaration of function 'RFID_CheckForCard' [-Wimplicit-function-declaration]
+   78 |     if (RFID_CheckForCard(uid, &uid_size)) {
+      |         ^~~~~~~~~~~~~~~~~
+../Src/secure_lock.c:84:26: error: 'STATE_RFID_SCANNED' undeclared (first use in this function)
+   84 |     if (current_state == STATE_RFID_SCANNED) {
+      |                          ^~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c:86:13: warning: implicit declaration of function 'Keypad_GetPIN' [-Wimplicit-function-declaration]
+   86 |         if (Keypad_GetPIN(pin, 4, 5000)) { // 5 second timeout for PIN entry
+      |             ^~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_ProcessRFID':
+../Src/secure_lock.c:99:25: error: 'STATE_RFID_SCANNED' undeclared (first use in this function)
+   99 |         current_state = STATE_RFID_SCANNED;
+      |                         ^~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_ProcessPIN':
+../Src/secure_lock.c:111:26: error: 'STATE_RFID_SCANNED' undeclared (first use in this function)
+  111 |     if (current_state != STATE_RFID_SCANNED) return;
+      |                          ^~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c:113:59: warning: passing argument 2 of 'SecureLock_ValidatePIN' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  113 |     if (SecureLock_ValidatePIN(pin, users[current_user_id].pin_hash)) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+In file included from ../Src/secure_lock.c:1:
+../Inc/secure_lock.h:29:52: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'const uint8_t *' {aka 'const unsigned char *'}
+   29 | uint8_t SecureLock_ValidatePIN(char *pin, uint8_t *stored_hash);
+      |                                           ~~~~~~~~~^~~~~~~~~~~
+../Src/secure_lock.c:118:29: error: 'STATE_LOCKOUT' undeclared (first use in this function)
+  118 |             current_state = STATE_LOCKOUT;
+      |                             ^~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_GrantAccess':
+../Src/secure_lock.c:151:21: error: 'STATE_ACCESS_GRANTED' undeclared (first use in this function)
+  151 |     current_state = STATE_ACCESS_GRANTED;
+      |                     ^~~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_DenyAccess':
+../Src/secure_lock.c:173:21: error: 'STATE_ACCESS_DENIED' undeclared (first use in this function)
+  173 |     current_state = STATE_ACCESS_DENIED;
+      |                     ^~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_LogAccess':
+../Src/secure_lock.c:196:9: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+  196 |         snprintf(log_message, sizeof(log_message), "System: %s", reason);
+      |         ^~~~~~~~
+../Src/secure_lock.c:7:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    6 | #include <string.h>
+  +++ |+#include <stdio.h>
+    7 | 
+../Src/secure_lock.c:196:9: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+  196 |         snprintf(log_message, sizeof(log_message), "System: %s", reason);
+      |         ^~~~~~~~
+../Src/secure_lock.c:196:9: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Src/secure_lock.c:198:9: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+  198 |         snprintf(log_message, sizeof(log_message), "User%d: %s - %s",
+      |         ^~~~~~~~
+../Src/secure_lock.c:198:9: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Src/secure_lock.c:206:5: warning: implicit declaration of function 'WIFI_SendEncryptedLog' [-Wimplicit-function-declaration]
+  206 |     WIFI_SendEncryptedLog(encrypted_message, strlen(log_message));
+      |     ^~~~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_RemoteUnlock':
+../Src/secure_lock.c:211:26: error: 'STATE_LOCKOUT' undeclared (first use in this function)
+  211 |     if (current_state != STATE_LOCKOUT) {
+      |                          ^~~~~~~~~~~~~
+make: *** [Src/subdir.mk:46: Src/secure_lock.o] Error 1
+make: *** Waiting for unfinished jobs....
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+23:57:34 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+23:57:34 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+23:57:35 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+00:04:00 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/secure_lock.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/secure_lock.d" -MT"Src/secure_lock.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/secure_lock.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+../Src/wifi.c:183:6: error: redefinition of 'WIFI_SendEncryptedLog'
+  183 | void WIFI_SendEncryptedLog(const char *encrypted_data, uint16_t length) {
+      |      ^~~~~~~~~~~~~~~~~~~~~
+../Src/wifi.c:103:6: note: previous definition of 'WIFI_SendEncryptedLog' with type 'void(const char *, uint16_t)' {aka 'void(const char *, short unsigned int)'}
+  103 | void WIFI_SendEncryptedLog(const char *encrypted_data, uint16_t length) {
+      |      ^~~~~~~~~~~~~~~~~~~~~
+make: *** [Src/subdir.mk:46: Src/wifi.o] Error 1
+make: *** Waiting for unfinished jobs....
+../Src/secure_lock.c:14:32: error: 'STATE_IDLE' undeclared here (not in a function)
+   14 | static uint8_t current_state = STATE_IDLE;
+      |                                ^~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_Run':
+../Src/secure_lock.c:67:26: error: 'STATE_LOCKOUT' undeclared (first use in this function)
+   67 |     if (current_state == STATE_LOCKOUT) {
+      |                          ^~~~~~~~~~~~~
+../Src/secure_lock.c:67:26: note: each undeclared identifier is reported only once for each function it appears in
+../Src/secure_lock.c:93:26: error: 'STATE_RFID_SCANNING' undeclared (first use in this function)
+   93 |     if (current_state == STATE_RFID_SCANNING) {
+      |                          ^~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_ProcessRFID':
+../Src/secure_lock.c:108:25: error: 'STATE_RFID_SCANNING' undeclared (first use in this function)
+  108 |         current_state = STATE_RFID_SCANNING;
+      |                         ^~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_ProcessPIN':
+../Src/secure_lock.c:120:26: error: 'STATE_RFID_SCANNING' undeclared (first use in this function)
+  120 |     if (current_state != STATE_RFID_SCANNING) return;
+      |                          ^~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c:127:29: error: 'STATE_LOCKOUT' undeclared (first use in this function)
+  127 |             current_state = STATE_LOCKOUT;
+      |                             ^~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_GrantAccess':
+../Src/secure_lock.c:160:21: error: 'STATE_ACCESS_GRANTED' undeclared (first use in this function)
+  160 |     current_state = STATE_ACCESS_GRANTED;
+      |                     ^~~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_DenyAccess':
+../Src/secure_lock.c:182:21: error: 'STATE_ACCESS_DENIED' undeclared (first use in this function)
+  182 |     current_state = STATE_ACCESS_DENIED;
+      |                     ^~~~~~~~~~~~~~~~~~~
+../Src/secure_lock.c: In function 'SecureLock_RemoteUnlock':
+../Src/secure_lock.c:220:26: error: 'STATE_LOCKOUT' undeclared (first use in this function)
+  220 |     if (current_state != STATE_LOCKOUT) {
+      |                          ^~~~~~~~~~~~~
+make: *** [Src/subdir.mk:46: Src/secure_lock.o] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+00:04:02 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+00:04:02 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+00:04:03 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+00:21:10 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/secure_lock.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/secure_lock.d" -MT"Src/secure_lock.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/secure_lock.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.100.202309141235/tools/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: ./Src/utils.o: in function `system_reset':
+D:/Embedded C/My_Workspace/Target/SecureLock/Debug/../Src/utils.c:197: multiple definition of `system_reset'; ./Src/main.o:D:/Embedded C/My_Workspace/Target/SecureLock/Debug/../Src/main.c:241: first defined here
+C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.100.202309141235/tools/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: ./Src/main.o: in function `System_Init':
+D:/Embedded C/My_Workspace/Target/SecureLock/Debug/../Src/main.c:70: undefined reference to `Config_LoadDefaults'
+collect2.exe: error: ld returned 1 exit status
+make: *** [makefile:63: SecureLock.elf] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+00:21:11 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+00:21:12 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+00:21:12 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+00:38:32 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/aes.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/aes.d" -MT"Src/aes.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/aes.o"
+arm-none-eabi-gcc "../Src/config.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/config.d" -MT"Src/config.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/config.o"
+arm-none-eabi-gcc "../Src/keypad.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/keypad.d" -MT"Src/keypad.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/keypad.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/rfid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/rfid.d" -MT"Src/rfid.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/rfid.o"
+arm-none-eabi-gcc "../Src/secure_lock.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/secure_lock.d" -MT"Src/secure_lock.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/secure_lock.o"
+arm-none-eabi-gcc "../Src/sha256.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sha256.d" -MT"Src/sha256.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sha256.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+../Src/rfid.c: In function 'RFID_TransceiveData':
+../Src/rfid.c:125:13: warning: unused variable 'irq_en' [-Wunused-variable]
+  125 |     uint8_t irq_en = 0x00;
+      |             ^~~~~~
+../Src/sha256.c: In function 'sha256_update':
+../Src/sha256.c:60:9: warning: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   60 |         memcpy(ctx->buffer + left, data, fill);
+      |         ^~~~~~
+../Src/sha256.c:2:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+    1 | #include "sha256.h"
+  +++ |+#include <string.h>
+    2 | 
+../Src/sha256.c:60:9: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]
+   60 |         memcpy(ctx->buffer + left, data, fill);
+      |         ^~~~~~
+../Src/sha256.c:60:9: note: include '<string.h>' or provide a declaration of 'memcpy'
+../Src/sha256.c:70:14: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]
+   70 |     if (len) memcpy(ctx->buffer + left, data, len);
+      |              ^~~~~~
+../Src/sha256.c:70:14: note: include '<string.h>' or provide a declaration of 'memcpy'
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc "../Src/utils.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/utils.d" -MT"Src/utils.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/utils.o"
+arm-none-eabi-gcc "../Src/wifi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/wifi.d" -MT"Src/wifi.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/wifi.o"
+arm-none-eabi-gcc -o "SecureLock.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\SecureLock\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SecureLock.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SecureLock.elf
+ 
+arm-none-eabi-size  SecureLock.elf 
+arm-none-eabi-objdump -h -S SecureLock.elf  > "SecureLock.list"
+   text	   data	    bss	    dec	    hex	filename
+  12324	     92	   1988	  14404	   3844	SecureLock.elf
+Finished building: default.size.stdout
+ 
+Finished building: SecureLock.list
+ 
+00:38:37 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+00:38:37 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+00:38:38 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 
+01:10:40 **** Incremental Build of configuration Debug for project SecureLock ****
+make -j4 all 
+arm-none-eabi-size  SecureLock.elf 
+   text	   data	    bss	    dec	    hex	filename
+  12324	     92	   1988	  14404	   3844	SecureLock.elf
+Finished building: default.size.stdout
+ 
+01:10:41 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+01:10:41 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+01:10:41 **** Incremental Build of configuration Debug for project test ****
+make -j4 all 
+arm-none-eabi-size  test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8460	    128	   1896	  10484	   28f4	test.elf
+Finished building: default.size.stdout
+ 

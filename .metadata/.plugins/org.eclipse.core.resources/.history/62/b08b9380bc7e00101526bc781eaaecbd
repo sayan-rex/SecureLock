@@ -1,0 +1,463 @@
+#include "main.h"
+#include "stm32f407xx_registers.h"
+#include "config.h"
+#include "secure_lock.h"
+#include "keypad.h"
+#include "rfid.h"
+#include "wifi.h"
+#include "utils.h"
+#include <stdio.h>
+
+// Global system variables
+static system_config_t system_config;
+static uint32_t system_heartbeat = 0;
+static uint8_t maintenance_mode = 0;
+
+// Function prototypes
+void SystemClock_Config(void);
+void GPIO_Init(void);
+void System_Init(void);
+void System_Run(void);
+void System_HandleEvents(void);
+void System_ProcessCommands(void);
+void System_Heartbeat(void);
+void System_ErrorHandler(error_code_t error);
+void Enter_MaintenanceMode(void);
+void Exit_MaintenanceMode(void);
+
+int main(void) {
+    // Initialize system
+    System_Init();
+
+    LOG_INFO("SecureLock System Started\n");
+    LOG_INFO("Firmware Version: 1.0.0\n");
+    LOG_INFO("System Clock: %lu Hz\n", SYSTEM_CLOCK_FREQ);
+
+    // Main application loop
+    while (1) {
+        System_Run();
+    }
+}
+
+void System_Init(void) {
+    // Configure system clock
+    SystemClock_Config();
+
+    // Initialize GPIO
+    GPIO_Init();
+
+    // Initialize peripherals
+    Keypad_Init();
+    RFID_Init();
+    WIFI_Init();
+
+    // Initialize security system
+    SecureLock_Init();
+
+    // Load configuration
+    Config_LoadDefaults();
+
+    // Set initial state
+    system_config.current_state = STATE_BOOT;
+    system_config.last_error = ERROR_NONE;
+    system_config.failed_attempts = 0;
+
+    // Copy default AES key
+    memcpy(system_config.aes_key, default_aes_key, AES_KEY_SIZE);
+
+    // Complete boot sequence
+    system_config.current_state = STATE_IDLE;
+    LOG_INFO("System initialization complete\n");
+
+    // Visual boot complete indication
+    led_blink(LED_GREEN, 200, 2);
+    led_blink(LED_BLUE, 200, 2);
+}
+
+void SystemClock_Config(void) {
+    // Enable HSI (16MHz internal oscillator)
+    RCC->CR |= RCC_CR_HSION;
+    while (!(RCC->CR & RCC_CR_HSIRDY));
+
+    // Configure flash latency for 16MHz
+    FLASH->ACR &= ~FLASH_ACR_LATENCY;
+    FLASH->ACR |= FLASH_ACR_LATENCY_0WS;
+
+    // Use HSI as system clock
+    RCC->CFGR &= ~RCC_CFGR_SW;
+    RCC->CFGR |= RCC_CFGR_SW_HSI;
+    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI);
+
+    LOG_DEBUG("System clock configured to 16MHz HSI\n");
+}
+
+void GPIO_Init(void) {
+    // Enable GPIO clocks
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN |
+                   RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIODEN |
+                   RCC_AHB1ENR_GPIOEEN;
+
+    // Configure Lock Relay pin
+    LOCK_RELAY_PORT->MODER &= ~(3 << (LOCK_RELAY_PIN * 2));
+    LOCK_RELAY_PORT->MODER |= (1 << (LOCK_RELAY_PIN * 2)); // Output mode
+    LOCK_RELAY_PORT->ODR &= ~(1 << LOCK_RELAY_PIN); // Start with relay off
+
+    // Configure User Button
+    USER_BUTTON_PORT->MODER &= ~(3 << (USER_BUTTON_PIN * 2)); // Input mode
+    USER_BUTTON_PORT->PUPDR &= ~(3 << (USER_BUTTON_PIN * 2));
+    USER_BUTTON_PORT->PUPDR |= (1 << (USER_BUTTON_PIN * 2)); // Pull-up
+
+    // Configure Status LEDs
+    LED_PORT->MODER &= ~(0xFF << (LED_GREEN_PIN * 2)); // Clear bits
+    LED_PORT->MODER |= (0x55 << (LED_GREEN_PIN * 2));  // Output mode
+
+    // Turn off all LEDs initially
+    LED_PORT->ODR &= ~((1 << LED_GREEN_PIN) | (1 << LED_ORANGE_PIN) |
+                      (1 << LED_RED_PIN) | (1 << LED_BLUE_PIN));
+
+    LOG_DEBUG("GPIO initialization complete\n");
+}
+
+void System_Run(void) {
+    // System heartbeat
+    System_Heartbeat();
+
+    // Handle system events based on current state
+    switch (system_config.current_state) {
+        case STATE_IDLE:
+            Handle_IdleState();
+            break;
+
+        case STATE_RFID_SCANNING:
+            Handle_RFIDScanningState();
+            break;
+
+        case STATE_PIN_ENTRY:
+            Handle_PINEntryState();
+            break;
+
+        case STATE_AUTHENTICATING:
+            Handle_AuthenticatingState();
+            break;
+
+        case STATE_ACCESS_GRANTED:
+            Handle_AccessGrantedState();
+            break;
+
+        case STATE_ACCESS_DENIED:
+            Handle_AccessDeniedState();
+            break;
+
+        case STATE_LOCKOUT:
+            Handle_LockoutState();
+            break;
+
+        case STATE_MAINTENANCE:
+            Handle_MaintenanceState();
+            break;
+
+        case STATE_ERROR:
+            Handle_ErrorState();
+            break;
+
+        default:
+            system_config.current_state = STATE_IDLE;
+            break;
+    }
+
+    // Process any incoming commands
+    System_ProcessCommands();
+
+    // Check for maintenance mode trigger (long press user button)
+    Check_MaintenanceModeTrigger();
+
+    // Small delay to prevent CPU hogging
+    delay_ms(10);
+}
+
+void Handle_IdleState(void) {
+    // Blink orange LED to indicate ready state
+    if (system_heartbeat % 1000 == 0) {
+        led_toggle(LED_ORANGE);
+    }
+
+    // Check for RFID cards
+    if (RFID_IsNewCardPresent()) {
+        system_config.current_state = STATE_RFID_SCANNING;
+        LOG_INFO("RFID card detected, transitioning to scanning state\n");
+        led_on(LED_BLUE);
+        led_off(LED_ORANGE);
+    }
+}
+
+void Handle_RFIDScanningState(void) {
+    uint8_t uid[4];
+    uint8_t uid_size;
+
+    if (RFID_CheckForCard(uid, &uid_size)) {
+        SecureLock_ProcessRFID(uid);
+        system_config.current_state = STATE_PIN_ENTRY;
+        LOG_INFO("RFID scanned successfully, awaiting PIN\n");
+    } else {
+        // Return to idle if no valid RFID after timeout
+        system_config.current_state = STATE_IDLE;
+        LOG_INFO("RFID scan timeout, returning to idle\n");
+        led_off(LED_BLUE);
+    }
+
+    delay_ms(RFID_SCAN_INTERVAL_MS);
+}
+
+void Handle_PINEntryState(void) {
+    char pin[MAX_PIN_LENGTH + 1];
+
+    if (Keypad_GetPIN(pin, MAX_PIN_LENGTH, SESSION_TIMEOUT_MS)) {
+        SecureLock_ProcessPIN(pin);
+        system_config.current_state = STATE_AUTHENTICATING;
+        LOG_INFO("PIN entered, authenticating...\n");
+    } else {
+        // Timeout or cancellation
+        system_config.current_state = STATE_IDLE;
+        LOG_INFO("PIN entry cancelled or timeout\n");
+        SecureLock_ResetSession();
+        led_off(LED_BLUE);
+    }
+}
+
+void Handle_AuthenticatingState(void) {
+    // Authentication is handled by SecureLock_ProcessPIN
+    // This state is just a placeholder for the authentication process
+    delay_ms(100);
+}
+
+void Handle_AccessGrantedState(void) {
+    // Access granted handling is done in SecureLock_GrantAccess
+    // This state ensures we stay here until lock is re-secured
+    static uint32_t grant_time = 0;
+
+    if (grant_time == 0) {
+        grant_time = get_tick_count();
+        LOG_INFO("Access granted\n");
+    }
+
+    // Check if unlock period has elapsed
+    if ((get_tick_count() - grant_time) > UNLOCK_DURATION_MS) {
+        system_config.current_state = STATE_IDLE;
+        grant_time = 0;
+        LOG_INFO("Access period ended, returning to idle\n");
+    }
+}
+
+void Handle_AccessDeniedState(void) {
+    // Access denied handling is done in SecureLock_DenyAccess
+    // Brief pause in denied state before returning to idle
+    delay_ms(2000);
+    system_config.current_state = STATE_IDLE;
+    LOG_INFO("Access denied, returning to idle\n");
+}
+
+void Handle_LockoutState(void) {
+    // Blink red LED rapidly during lockout
+    if (system_heartbeat % 200 == 0) {
+        led_toggle(LED_RED);
+    }
+
+    // Check if lockout period has expired
+    if (system_config.failed_attempts < MAX_FAILED_ATTEMPTS) {
+        system_config.current_state = STATE_IDLE;
+        led_off(LED_RED);
+        LOG_INFO("Lockout period ended\n");
+    }
+}
+
+void Handle_MaintenanceState(void) {
+    // Solid blue LED indicates maintenance mode
+    led_on(LED_BLUE);
+    led_off(LED_ORANGE);
+
+    // Handle maintenance operations
+    Maintenance_Operations();
+}
+
+void Handle_ErrorState(void) {
+    // Rapid red LED blink indicates error state
+    if (system_heartbeat % 100 == 0) {
+        led_toggle(LED_RED);
+    }
+
+    // Attempt recovery after delay
+    static uint32_t error_time = 0;
+    if (error_time == 0) {
+        error_time = get_tick_count();
+    }
+
+    if ((get_tick_count() - error_time) > 5000) {
+        System_Init(); // Attempt to reinitialize
+        error_time = 0;
+    }
+}
+
+void System_Heartbeat(void) {
+    static uint32_t last_heartbeat = 0;
+    uint32_t current_time = get_tick_count();
+
+    if (current_time - last_heartbeat >= 1000) {
+        system_heartbeat++;
+        last_heartbeat = current_time;
+
+        // Periodic system tasks
+        if (system_heartbeat % 10 == 0) { // Every 10 seconds
+            LOG_DEBUG("System heartbeat: %lu\n", system_heartbeat);
+
+            // Send periodic status update if WiFi connected
+            if (WIFI_IsConnected()) {
+                WIFI_SendLog("System heartbeat OK");
+            }
+        }
+    }
+}
+
+void System_ProcessCommands(void) {
+    char command[32];
+
+    if (WIFI_HasCommand()) {
+        WIFI_GetCommand(command, sizeof(command));
+        LOG_DEBUG("Received command: %s\n", command);
+
+        if (strcmp(command, "UNLOCK") == 0 && REMOTE_UNLOCK_ENABLED) {
+            SecureLock_RemoteUnlock();
+        } else if (strcmp(command, "STATUS") == 0) {
+            Send_SystemStatus();
+        } else if (strcmp(command, "LOGS") == 0) {
+            SecureLock_SendAccessLogs();
+        } else if (strcmp(command, "REBOOT") == 0) {
+            system_reset();
+        } else {
+            LOG_WARNING("Unknown command: %s\n", command);
+        }
+    }
+}
+
+void Check_MaintenanceModeTrigger(void) {
+    static uint32_t button_press_time = 0;
+    static uint8_t button_was_pressed = 0;
+
+    uint8_t button_pressed = !(USER_BUTTON_PORT->IDR & (1 << USER_BUTTON_PIN));
+
+    if (button_pressed && !button_was_pressed) {
+        button_press_time = get_tick_count();
+        button_was_pressed = 1;
+    } else if (!button_pressed && button_was_pressed) {
+        button_was_pressed = 0;
+
+        // Check if it was a long press (>3 seconds)
+        if ((get_tick_count() - button_press_time) > 3000) {
+            if (maintenance_mode) {
+                Exit_MaintenanceMode();
+            } else {
+                Enter_MaintenanceMode();
+            }
+        }
+    }
+}
+
+void Enter_MaintenanceMode(void) {
+    maintenance_mode = 1;
+    system_config.current_state = STATE_MAINTENANCE;
+    LOG_INFO("Entering maintenance mode\n");
+
+    // Visual indication
+    led_blink(LED_BLUE, 100, 5);
+}
+
+void Exit_MaintenanceMode(void) {
+    maintenance_mode = 0;
+    system_config.current_state = STATE_IDLE;
+    LOG_INFO("Exiting maintenance mode\n");
+
+    // Visual indication
+    led_blink(LED_GREEN, 100, 3);
+}
+
+void Maintenance_Operations(void) {
+    // Placeholder for maintenance operations
+    // This could include user management, system configuration, etc.
+    LOG_DEBUG("Maintenance mode active\n");
+    delay_ms(1000);
+}
+
+void Send_SystemStatus(void) {
+    char status[128];
+    snprintf(status, sizeof(status),
+             "Status: %d, Failures: %d, Uptime: %lus",
+             system_config.current_state,
+             system_config.failed_attempts,
+             system_heartbeat);
+
+    WIFI_SendLog(status);
+}
+
+void System_ErrorHandler(error_code_t error) {
+    system_config.last_error = error;
+    system_config.current_state = STATE_ERROR;
+
+    LOG_ERROR("System error: %d\n", error);
+
+    // Log error via WiFi if available
+    if (WIFI_IsConnected()) {
+        char error_msg[64];
+        snprintf(error_msg, sizeof(error_msg), "ERROR: %d", error);
+        WIFI_SendLog(error_msg);
+    }
+}
+
+// System reset handler
+void system_reset(void) {
+    LOG_INFO("System reset requested\n");
+    NVIC_SystemReset();
+}
+
+// Default exception handlers
+void NMI_Handler(void) {
+    System_ErrorHandler(ERROR_SYSTEM_FAULT);
+    while (1);
+}
+
+void HardFault_Handler(void) {
+    System_ErrorHandler(ERROR_HARDWARE_FAIL);
+    while (1);
+}
+
+void MemManage_Handler(void) {
+    System_ErrorHandler(ERROR_MEMORY_FULL);
+    while (1);
+}
+
+void BusFault_Handler(void) {
+    System_ErrorHandler(ERROR_HARDWARE_FAIL);
+    while (1);
+}
+
+void UsageFault_Handler(void) {
+    System_ErrorHandler(ERROR_SYSTEM_FAULT);
+    while (1);
+}
+
+void SVC_Handler(void) {
+    // System service call handler
+}
+
+void PendSV_Handler(void) {
+    // Pendable service handler
+}
+
+void SysTick_Handler(void) {
+    // Systick interrupt handler
+    static uint32_t tick_count = 0;
+    tick_count++;
+}
+
+// Default interrupt handler
+void Default_Handler(void) {
+    while (1);
+}

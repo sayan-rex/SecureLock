@@ -1,0 +1,4 @@
+../Src/sha256.c:23:6:sha256_transform	4
+../Src/sha256.c:45:6:sha256_init	1
+../Src/sha256.c:53:6:sha256_update	6
+../Src/sha256.c:73:6:sha256_final	3

@@ -1,0 +1,37 @@
+#ifndef RFID_H
+#define RFID_H
+
+#include <stdint.h>
+
+// RFID functions
+void RFID_Init(void);
+uint8_t RFID_Transfer(uint8_t data);
+void RFID_WriteRegister(uint8_t reg, uint8_t value);
+uint8_t RFID_ReadRegister(uint8_t reg);
+int RFID_CheckForCard(uint8_t *uid, uint8_t *uid_size);
+uint8_t RFID_TransceiveData(uint8_t *send_data, uint8_t send_len,
+                           uint8_t *back_data, uint8_t *back_len,
+                           uint8_t *valid_bits);
+void RFID_Halt(void);
+uint8_t RFID_CalculateCRC(uint8_t *data, uint8_t length, uint8_t *result);
+int RFID_IsNewCardPresent(void);
+int RFID_ReadCardSerial(uint8_t *uid, uint8_t *uid_size);
+
+// MFRC522 register definitions
+#define MFRC522_RESERVED_00_REG     0x00
+#define MFRC522_COMMAND_REG         0x01
+#define MFRC522_COM_I_EN_REG        0x02
+#define MFRC522_DIV_I_EN_REG        0x03
+#define MFRC522_COM_IRQ_REG         0x04
+#define MFRC522_DIV_IRQ_REG         0x05
+#define MFRC522_ERROR_REG           0x06
+#define MFRC522_STATUS1_REG         0x07
+#define MFRC522_STATUS2_REG         0x08
+#define MFRC522_FIFO_DATA_REG       0x09
+#define MFRC522_FIFO_LEVEL_REG      0x0A
+#define MFRC522_WATER_LEVEL_REG     0x0B
+#define MFRC522_CONTROL_REG         0x0C
+#define MFRC522_BIT_FRAMING_REG     0x0D
+#define MFRC522_COLL_REG            0x0E
+
+#endif // RFID_H

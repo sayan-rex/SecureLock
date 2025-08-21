@@ -1,0 +1,65 @@
+#include "rfid.h"
+#include "stm32f407xx_registers.h"
+#include "utils.h"
+
+void RFID_Init(void) {
+    // Enable SPI1 clock
+    RCC_APB2ENR |= (1 << 12);
+
+    // Configure SPI1 pins: PA5=SCK, PA6=MISO, PA7=MOSI
+    GPIOA->MODER |= (2 << 10) | (2 << 12) | (2 << 14); // Alternate function
+    GPIOA->AFR[0] |= (5 << 20) | (5 << 24) | (5 << 28); // AF5 for SPI1
+
+    // Configure RFID SS pin (PD1) and RST pin (PD0)
+    GPIOD->MODER |= (1 << 2) | (1 << 0); // Output mode
+    GPIOD->ODR |= (1 << 1); // SS high initially
+
+    // Configure SPI1
+    SPI1->CR1 = (1 << 2) | (1 << 1) | (1 << 0); // BR[2:0] = 011 (fPCLK/16)
+    SPI1->CR1 |= (1 << 9) | (1 << 8); // SSM=1, SSI=1
+    SPI1->CR1 |= (1 << 6); // SPI enable
+
+    // Reset RC522
+    GPIOD->ODR &= ~(1 << 0); // RST low
+    delay_ms(10);
+    GPIOD->ODR |= (1 << 0);  // RST high
+    delay_ms(10);
+
+    RFID_InitSequence();
+}
+
+uint8_t RFID_Transfer(uint8_t data) {
+    while (!(SPI1->SR & (1 << 1))); // Wait for TXE
+    SPI1->DR = data;
+    while (!(SPI1->SR & (1 << 0))); // Wait for RX not empty
+    return SPI1->DR;
+}
+
+int RFID_CheckForCard(uint8_t *uid, uint8_t *uid_size) {
+    GPIOD->ODR &= ~(1 << 1); // SS low
+
+    // Send request command
+    RFID_Transfer(0x26); // PICC_REQALL
+    uint8_t response = RFID_Transfer(0x00);
+
+    GPIOD->ODR |= (1 << 1); // SS high
+
+    if (response == 0x00) {
+        return 0; // No card found
+    }
+
+    // Read card UID
+    GPIOD->ODR &= ~(1 << 1); // SS low
+    RFID_Transfer(0x93); // PICC_ANTICOLL
+    RFID_Transfer(0x20);
+
+    for (int i = 0; i < 4; i++) {
+        uid[i] = RFID_Transfer(0x00);
+    }
+
+    GPIOD->ODR |= (1 << 1); // SS high
+    *uid_size = 4;
+    return 1;
+}
+
+

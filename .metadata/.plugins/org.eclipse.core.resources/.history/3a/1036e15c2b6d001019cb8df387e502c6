@@ -1,0 +1,19 @@
+#ifndef MAIN_H
+#define MAIN_H
+
+#include <stdint.h>
+
+void uart2_init(void);
+void uart2_write(char c);
+void uart2_print(char *str);
+
+void i2c1_init(void);
+void i2c1_start(void);
+void i2c1_write(uint8_t data);
+uint8_t i2c1_read_ack(void);
+uint8_t i2c1_read_nack(void);
+void i2c1_stop(void);
+
+void delay_ms(uint32_t ms);
+
+#endif

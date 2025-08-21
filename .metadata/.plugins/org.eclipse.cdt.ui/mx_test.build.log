@@ -1,0 +1,10 @@
+01:10:41 **** Incremental Build of configuration Debug for project mx_test ****
+make -j4 all 
+arm-none-eabi-size  mx_test.elf 
+   text	   data	    bss	    dec	    hex	filename
+    644	      8	   1568	   2220	    8ac	mx_test.elf
+Finished building: default.size.stdout
+ 
+
+01:10:41 Build Finished. 0 errors, 0 warnings. (took 304ms)
+

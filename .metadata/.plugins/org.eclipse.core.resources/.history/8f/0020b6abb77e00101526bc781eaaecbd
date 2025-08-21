@@ -1,0 +1,318 @@
+#include "rfid.h"
+#include "stm32f407xx_registers.h"
+#include "utils.h"
+#include <string.h>
+
+// MFRC522 register definitions
+#define MFRC522_CMD_REG             0x01
+#define MFRC522_COM_I_EN_REG        0x02
+#define MFRC522_DIV_I_EN_REG        0x03
+#define MFRC522_COM_IRQ_REG         0x04
+#define MFRC522_DIV_IRQ_REG         0x05
+#define MFRC522_ERROR_REG           0x06
+#define MFRC522_STATUS1_REG         0x07
+#define MFRC522_STATUS2_REG         0x08
+#define MFRC522_FIFO_DATA_REG       0x09
+#define MFRC522_FIFO_LEVEL_REG      0x0A
+#define MFRC522_WATER_LEVEL_REG     0x0B
+#define MFRC522_CONTROL_REG         0x0C
+#define MFRC522_BIT_FRAMING_REG     0x0D
+#define MFRC522_COLL_REG            0x0E
+
+// MFRC522 commands
+#define MFRC522_CMD_IDLE            0x00
+#define MFRC522_CMD_MEM             0x01
+#define MFRC522_CMD_GENERATE_RANDOM_ID 0x02
+#define MFRC522_CMD_CALC_CRC        0x03
+#define MFRC522_CMD_TRANSMIT        0x04
+#define MFRC522_CMD_NO_CMD_CHANGE   0x07
+#define MFRC522_CMD_RECEIVE         0x08
+#define MFRC522_CMD_TRANSCEIVE      0x0C
+#define MFRC522_CMD_MF_AUTHENT      0x0E
+#define MFRC522_CMD_SOFT_RESET      0x0F
+
+// PCD commands
+#define PCD_CMD_REQ_IDL             0x26
+#define PCD_CMD_REQ_ALL             0x52
+#define PCD_CMD_ANTI_COLL           0x93
+#define PCD_CMD_SELECT_TAG          0x93
+#define PCD_CMD_AUTHENT1A           0x60
+#define PCD_CMD_AUTHENT1B           0x61
+#define PCD_CMD_READ                0x30
+#define PCD_CMD_WRITE               0xA0
+#define PCD_CMD_DECREMENT           0xC0
+#define PCD_CMD_INCREMENT           0xC1
+#define PCD_CMD_RESTORE             0xC2
+#define PCD_CMD_TRANSFER            0xB0
+#define PCD_CMD_HALT                0x50
+
+void RFID_Init(void) {
+    // Enable SPI1 clock
+    RCC->APB2ENR |= (1 << 12); // SPI1EN
+
+    // Configure SPI1 pins: PA5=SCK, PA6=MISO, PA7=MOSI
+    GPIOA->MODER &= ~((3 << 10) | (3 << 12) | (3 << 14)); // Clear bits
+    GPIOA->MODER |= ((2 << 10) | (2 << 12) | (2 << 14));  // Alternate function mode
+
+    GPIOA->AFR[0] &= ~((0xF << 20) | (0xF << 24) | (0xF << 28)); // Clear AF bits
+    GPIOA->AFR[0] |= ((5 << 20) | (5 << 24) | (5 << 28));        // AF5 for SPI1
+
+    // Configure RFID SS pin (PE3) and RST pin (PE2)
+    GPIOE->MODER &= ~((3 << 4) | (3 << 6)); // Clear bits
+    GPIOE->MODER |= ((1 << 4) | (1 << 6));  // Output mode
+
+    GPIOE->ODR |= (1 << 3); // SS high initially
+    GPIOE->ODR |= (1 << 2); // RST high
+
+    // Configure SPI1
+    SPI1->CR1 = (1 << 2) | (1 << 1) | (1 << 0); // BR[2:0] = 011 (fPCLK/16)
+    SPI1->CR1 |= (1 << 9) | (1 << 8);           // SSM=1, SSI=1
+    SPI1->CR1 |= (1 << 6);                      // SPI enable
+
+    // Reset RC522
+    GPIOE->ODR &= ~(1 << 2); // RST low
+    delay_ms(10);
+    GPIOE->ODR |= (1 << 2);  // RST high
+    delay_ms(10);
+
+    // Initialize MFRC522
+    RFID_WriteRegister(MFRC522_COMMAND_REG, MFRC522_CMD_SOFT_RESET);
+    delay_ms(50);
+
+    // Configure MFRC522
+    RFID_WriteRegister(MFRC522_T_MODE_REG, 0x8D);
+    RFID_WriteRegister(MFRC522_T_PRESCALER_REG, 0x3E);
+    RFID_WriteRegister(MFRC522_T_RELOAD_L_REG, 0x1E);
+    RFID_WriteRegister(MFRC522_T_RELOAD_H_REG, 0x00);
+    RFID_WriteRegister(MFRC522_TX_AUTO_REG, 0x40);
+    RFID_WriteRegister(MFRC522_MODE_REG, 0x3D);
+
+    // Enable antenna
+    uint8_t value = RFID_ReadRegister(MFRC522_TX_CONTROL_REG);
+    if (!(value & 0x03)) {
+        RFID_WriteRegister(MFRC522_TX_CONTROL_REG, value | 0x03);
+    }
+}
+
+uint8_t RFID_Transfer(uint8_t data) {
+    // Wait for TX buffer empty
+    while (!(SPI1->SR & (1 << 1))); // Wait for TXE
+
+    // Send data
+    SPI1->DR = data;
+
+    // Wait for RX buffer not empty
+    while (!(SPI1->SR & (1 << 0))); // Wait for RXNE
+
+    // Return received data
+    return SPI1->DR;
+}
+
+void RFID_WriteRegister(uint8_t reg, uint8_t value) {
+    GPIOE->ODR &= ~(1 << 3); // SS low
+
+    RFID_Transfer((reg << 1) & 0x7E); // MSB = 0 for write, bits 1-6 = register address
+    RFID_Transfer(value);
+
+    GPIOE->ODR |= (1 << 3); // SS high
+}
+
+uint8_t RFID_ReadRegister(uint8_t reg) {
+    uint8_t value;
+
+    GPIOE->ODR &= ~(1 << 3); // SS low
+
+    RFID_Transfer(((reg << 1) & 0x7E) | 0x80); // MSB = 1 for read
+    value = RFID_Transfer(0x00);
+
+    GPIOE->ODR |= (1 << 3); // SS high
+
+    return value;
+}
+
+int RFID_CheckForCard(uint8_t *uid, uint8_t *uid_size) {
+    uint8_t buffer[2];
+    uint8_t status;
+
+    // Send request command
+    buffer[0] = PCD_CMD_REQ_IDL;
+    buffer[1] = 0x20;
+
+    status = RFID_TransceiveData(buffer, 2, buffer, sizeof(buffer), 0);
+
+    if (status != 0x00) {
+        return 0; // No card found
+    }
+
+    // Anti-collision
+    buffer[0] = PCD_CMD_ANTI_COLL;
+    buffer[1] = 0x20;
+
+    status = RFID_TransceiveData(buffer, 2, buffer, sizeof(buffer), uid);
+
+    if (status == 0x00 && uid != NULL) {
+        *uid_size = 4; // Assuming 4-byte UID
+        return 1;
+    }
+
+    return 0;
+}
+
+uint8_t RFID_TransceiveData(uint8_t *send_data, uint8_t send_len,
+                           uint8_t *back_data, uint8_t *back_len,
+                           uint8_t *valid_bits) {
+    uint8_t wait_irq = 0x30;
+    uint8_t status;
+    uint8_t irq_en = 0x00;
+    uint8_t last_bits;
+    uint8_t n;
+    uint8_t tmp;
+
+    // Prepare for data transfer
+    RFID_WriteRegister(MFRC522_COMMAND_REG, MFRC522_CMD_IDLE);
+
+    // Set the BitFramingReg
+    RFID_WriteRegister(MFRC522_BIT_FRAMING_REG, (valid_bits != NULL) ? *valid_bits : 0x00);
+
+    // Write data to FIFO
+    for (uint8_t i = 0; i < send_len; i++) {
+        RFID_WriteRegister(MFRC522_FIFO_DATA_REG, send_data[i]);
+    }
+
+    // Execute the command
+    RFID_WriteRegister(MFRC522_COMMAND_REG, MFRC522_CMD_TRANSCEIVE);
+    RFID_WriteRegister(MFRC522_BIT_FRAMING_REG, 0x80);
+
+    // Wait for completion
+    uint16_t i = 2000; // Timeout counter
+    do {
+        status = RFID_ReadRegister(MFRC522_COMMAND_REG);
+        if ((--i == 0) || (status & 0x01)) {
+            break;
+        }
+    } while (!(RFID_ReadRegister(MFRC522_COM_IRQ_REG) & wait_irq));
+
+    // Check for errors
+    if (i == 0) {
+        return 0xFF; // Timeout
+    }
+
+    if (RFID_ReadRegister(MFRC522_ERROR_REG) & 0x13) {
+        return 0xFF; // Error
+    }
+
+    // Read received data
+    if (back_data != NULL && back_len != NULL) {
+        n = RFID_ReadRegister(MFRC522_FIFO_LEVEL_REG);
+        if (n > *back_len) {
+            return 0xFF; // Buffer too small
+        }
+
+        *back_len = n;
+        for (uint8_t i = 0; i < n; i++) {
+            back_data[i] = RFID_ReadRegister(MFRC522_FIFO_DATA_REG);
+        }
+    }
+
+    if (valid_bits != NULL) {
+        *valid_bits = RFID_ReadRegister(MFRC522_CONTROL_REG) & 0x07;
+    }
+
+    return 0x00; // Success
+}
+
+void RFID_Halt(void) {
+    uint8_t buffer[4];
+    buffer[0] = PCD_CMD_HALT;
+    buffer[1] = 0;
+
+    RFID_TransceiveData(buffer, 2, NULL, NULL, NULL);
+}
+
+uint8_t RFID_CalculateCRC(uint8_t *data, uint8_t length, uint8_t *result) {
+    RFID_WriteRegister(MFRC522_COMMAND_REG, MFRC522_CMD_IDLE);
+    RFID_WriteRegister(MFRC522_DIV_IRQ_REG, 0x04);
+    RFID_WriteRegister(MFRC522_FIFO_LEVEL_REG, 0x80);
+
+    for (uint8_t i = 0; i < length; i++) {
+        RFID_WriteRegister(MFRC522_FIFO_DATA_REG, data[i]);
+    }
+
+    RFID_WriteRegister(MFRC522_COMMAND_REG, MFRC522_CMD_CALC_CRC);
+
+    // Wait for CRC calculation
+    uint16_t i = 0xFF;
+    while (i-- && !(RFID_ReadRegister(MFRC522_DIV_IRQ_REG) & 0x04));
+
+    if (i == 0) {
+        return 0xFF; // Timeout
+    }
+
+    // Read CRC result
+    result[0] = RFID_ReadRegister(MFRC522_CRC_RESULT_L_REG);
+    result[1] = RFID_ReadRegister(MFRC522_CRC_RESULT_H_REG);
+
+    return 0x00;
+}
+
+int RFID_IsNewCardPresent(void) {
+    uint8_t buffer[2];
+    buffer[0] = PCD_CMD_REQ_IDL;
+    buffer[1] = 0x20;
+
+    return (RFID_TransceiveData(buffer, 2, buffer, sizeof(buffer), 0) == 0x00);
+}
+
+int RFID_ReadCardSerial(uint8_t *uid, uint8_t *uid_size) {
+    return RFID_CheckForCard(uid, uid_size);
+}
+
+// MFRC522 register addresses (compatible with common libraries)
+#define MFRC522_RESERVED_00_REG     0x00
+#define MFRC522_COMMAND_REG         0x01
+#define MFRC522_COM_I_EN_REG        0x02
+#define MFRC522_DIV_I_EN_REG        0x03
+#define MFRC522_COM_IRQ_REG         0x04
+#define MFRC522_DIV_IRQ_REG         0x05
+#define MFRC522_ERROR_REG           0x06
+#define MFRC522_STATUS1_REG         0x07
+#define MFRC522_STATUS2_REG         0x08
+#define MFRC522_FIFO_DATA_REG       0x09
+#define MFRC522_FIFO_LEVEL_REG      0x0A
+#define MFRC522_WATER_LEVEL_REG     0x0B
+#define MFRC522_CONTROL_REG         0x0C
+#define MFRC522_BIT_FRAMING_REG     0x0D
+#define MFRC522_COLL_REG            0x0E
+#define MFRC522_RESERVED_0F_REG     0x0F
+#define MFRC522_RESERVED_10_REG     0x10
+#define MFRC522_MODE_REG            0x11
+#define MFRC522_TX_MODE_REG         0x12
+#define MFRC522_RX_MODE_REG         0x13
+#define MFRC522_TX_CONTROL_REG      0x14
+#define MFRC522_TX_AUTO_REG         0x15
+#define MFRC522_TX_SEL_REG          0x16
+#define MFRC522_RX_SEL_REG          0x17
+#define MFRC522_RX_THRESHOLD_REG    0x18
+#define MFRC522_DEMOD_REG           0x19
+#define MFRC522_RESERVED_1A_REG     0x1A
+#define MFRC522_RESERVED_1B_REG     0x1B
+#define MFRC522_MIFARE_REG          0x1C
+#define MFRC522_RESERVED_1D_REG     0x1D
+#define MFRC522_RESERVED_1E_REG     0x1E
+#define MFRC522_SERIAL_SPEED_REG    0x1F
+#define MFRC522_RESERVED_20_REG     0x20
+#define MFRC522_CRC_RESULT_H_REG    0x21
+#define MFRC522_CRC_RESULT_L_REG    0x22
+#define MFRC522_RESERVED_23_REG     0x23
+#define MFRC522_MOD_WIDTH_REG       0x24
+#define MFRC522_RESERVED_25_REG     0x25
+#define MFRC522_RF_CFG_REG          0x26
+#define MFRC522_GS_N_REG            0x27
+#define MFRC522_CW_GS_P_REG         0x28
+#define MFRC522_MOD_GS_P_REG        0x29
+#define MFRC522_T_MODE_REG          0x2A
+#define MFRC522_T_PRESCALER_REG     0x2B
+#define MFRC522_T_RELOAD_H_REG      0x2C
+#define MFRC522_T_RELOAD_L_REG      0x2D
+#define MFRC522_T_COUNTER_VAL_H_REG 0x2E
+#define MFRC522_T_COUNTER_VAL_L_REG 0x2F

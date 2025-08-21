@@ -1,0 +1,20 @@
+#ifndef UTILS_H
+#define UTILS_H
+
+#include <stdint.h>
+#include <string.h>
+
+void delay_ms(uint32_t ms);
+uint32_t get_tick_count(void);
+void GrantAccess(void);
+void DenyAccess(void);
+
+// Simple implementations for functions we need
+static inline int snprintf(char *str, size size, const char *format, ...) {
+    // For bare metal, we'll implement a simple version
+    // This is a placeholder - implement properly if needed
+    strcpy(str, format);
+    return strlen(str);
+}
+
+#endif // UTILS_H

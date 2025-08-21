@@ -1,0 +1,50 @@
+#ifndef SECURE_LOCK_H
+#define SECURE_LOCK_H
+
+#include <stdint.h>
+#include <stdbool.h>
+
+// Security configuration
+#define MAX_FAILED_ATTEMPTS 3
+#define LOCKOUT_TIME_MS 30000 // 30 seconds lockout
+#define SESSION_TIMEOUT_MS 10000 // 10 seconds session timeout
+
+// AES key (128-bit) - In production, this should be stored securely
+#define AES_KEY {0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C}
+
+// User database structure
+typedef struct {
+    uint8_t uid[4];         // RFID UID
+    uint8_t pin_hash[32];   // SHA-256 hash of PIN
+    uint8_t privileges;     // User privileges
+} user_t;
+
+// Security states
+typedef enum {
+    STATE_IDLE,
+    STATE_RFID_SCANNED,
+    STATE_PIN_ENTERED,
+    STATE_ACCESS_GRANTED,
+    STATE_ACCESS_DENIED,
+    STATE_LOCKOUT
+} security_state_t;
+
+// Function prototypes
+void SecureLock_Init(void);
+void SecureLock_Run(void);
+void SecureLock_ProcessRFID(uint8_t *uid);
+void SecureLock_ProcessPIN(char *pin);
+void SecureLock_GrantAccess(void);
+void SecureLock_DenyAccess(void);
+void SecureLock_ResetSession(void);
+
+// Security functions
+uint8_t SecureLock_ValidateRFID(uint8_t *uid);
+uint8_t SecureLock_ValidatePIN(char *pin, uint8_t *stored_hash);
+void SecureLock_LogAccess(uint8_t user_id, uint8_t granted, const char *reason);
+
+// Remote control
+void SecureLock_RemoteUnlock(void);
+void SecureLock_SendAccessLogs(void);
+
+#endif // SECURE_LOCK_H

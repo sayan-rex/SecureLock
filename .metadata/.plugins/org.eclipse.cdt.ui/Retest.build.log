@@ -1,0 +1,37 @@
+12:56:13 **** Incremental Build of configuration Debug for project Retest ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+../Src/main.c: In function 'main':
+../Src/main.c:27:18: warning: multi-character character constant [-Wmultichar]
+   27 |         char a = 'a1';
+      |                  ^~~~
+../Src/main.c:27:18: warning: unsigned conversion from 'int' to 'char' changes value from '24881' to '49' [-Woverflow]
+../Src/main.c:28:18: warning: multi-character character constant [-Wmultichar]
+   28 |         char b = 'b2';
+      |                  ^~~~
+../Src/main.c:28:18: warning: unsigned conversion from 'int' to 'char' changes value from '25138' to '50' [-Woverflow]
+../Src/main.c:30:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   30 |         printf("The address of veriable a = %p\n", &a);
+      |         ^~~~~~
+../Src/main.c:20:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+   19 | #include <stdint.h>
+  +++ |+#include <stdio.h>
+   20 | 
+../Src/main.c:30:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   30 |         printf("The address of veriable a = %p\n", &a);
+      |         ^~~~~~
+../Src/main.c:30:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+arm-none-eabi-gcc -o "Retest.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Embedded C\My_Workspace\Target\Retest\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Retest.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Retest.elf
+ 
+arm-none-eabi-size  Retest.elf 
+arm-none-eabi-objdump -h -S Retest.elf  > "Retest.list"
+   text	   data	    bss	    dec	    hex	filename
+   4872	    100	   1900	   6872	   1ad8	Retest.elf
+Finished building: default.size.stdout
+ 
+Finished building: Retest.list
+ 
+
+12:56:15 Build Finished. 0 errors, 6 warnings. (took 1s.110ms)
+

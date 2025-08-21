@@ -1,0 +1,395 @@
+#include "utils.h"
+#include "stm32f407xx_registers.h"
+
+// ==================== DELAY FUNCTIONS ====================
+
+// Simple busy-wait delay in milliseconds
+void delay_ms(uint32_t ms) {
+    // Approximate delay for 16MHz clock
+    for (volatile uint32_t i = 0; i < ms * 1600; i++) {
+        __asm__("nop");
+    }
+}
+
+// Simple busy-wait delay in microseconds
+void delay_us(uint32_t us) {
+    // Approximate delay for 16MHz clock
+    for (volatile uint32_t i = 0; i < us * 16; i++) {
+        __asm__("nop");
+    }
+}
+
+// Initialize SysTick timer for precise delays
+void SysTick_Init(uint32_t ticks) {
+    // Disable SysTick
+    SysTick->CTRL = 0;
+
+    // Set reload value
+    SysTick->LOAD = ticks - 1;
+
+    // Set current value to 0
+    SysTick->VAL = 0;
+
+    // Enable SysTick with processor clock
+    SysTick->CTRL = SYSTICK_CTRL_ENABLE | SYSTICK_CTRL_CLKSOURCE;
+}
+
+// Precise delay using SysTick (blocks until delay completes)
+void delay_ms_precise(uint32_t ms) {
+    // Calculate ticks needed for the delay
+    uint32_t ticks = ms * (SystemCoreClock / 1000);
+
+    // Set reload value
+    SysTick->LOAD = ticks - 1;
+
+    // Clear current value
+    SysTick->VAL = 0;
+
+    // Wait until count flag is set
+    while (!(SysTick->CTRL & SYSTICK_CTRL_COUNTFLAG));
+}
+
+// ==================== TIME FUNCTIONS ====================
+
+// Global tick counter (incremented by SysTick interrupt)
+volatile uint32_t tick_counter = 0;
+
+// Get current tick count
+uint32_t get_tick_count(void) {
+    return tick_counter;
+}
+
+// Non-blocking delay check
+uint8_t delay_elapsed(uint32_t start_time, uint32_t delay_ms) {
+    return (get_tick_count() - start_time) >= delay_ms;
+}
+
+// ==================== STRING FUNCTIONS ====================
+
+// String length
+size_t strlen(const char *str) {
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+// String copy
+char *strcpy(char *dest, const char *src) {
+    char *original_dest = dest;
+    while ((*dest++ = *src++) != '\0');
+    return original_dest;
+}
+
+// String compare
+int strcmp(const char *s1, const char *s2) {
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *(const unsigned char *)s1 - *(const unsigned char *)s2;
+}
+
+// String concatenate
+char *strcat(char *dest, const char *src) {
+    char *original_dest = dest;
+
+    // Find end of destination string
+    while (*dest != '\0') {
+        dest++;
+    }
+
+    // Copy source to end of destination
+    while ((*dest++ = *src++) != '\0');
+
+    return original_dest;
+}
+
+// ==================== MEMORY FUNCTIONS ====================
+
+// Memory copy
+void *memcpy(void *dest, const void *src, size_t n) {
+    char *d = dest;
+    const char *s = src;
+    while (n--) {
+        *d++ = *s++;
+    }
+    return dest;
+}
+
+// Memory set
+void *memset(void *s, int c, size_t n) {
+    unsigned char *p = s;
+    while (n--) {
+        *p++ = (unsigned char)c;
+    }
+    return s;
+}
+
+// Memory compare
+int memcmp(const void *s1, const void *s2, size_t n) {
+    const unsigned char *p1 = s1, *p2 = s2;
+    while (n--) {
+        if (*p1 != *p2) {
+            return *p1 - *p2;
+        }
+        p1++;
+        p2++;
+    }
+    return 0;
+}
+
+// Memory move (handles overlapping regions)
+void *memmove(void *dest, const void *src, size_t n) {
+    unsigned char *d = dest;
+    const unsigned char *s = src;
+
+    if (d < s) {
+        // Copy forward
+        while (n--) {
+            *d++ = *s++;
+        }
+    } else {
+        // Copy backward to handle overlap
+        d += n;
+        s += n;
+        while (n--) {
+            *--d = *--s;
+        }
+    }
+    return dest;
+}
+
+// ==================== CONVERSION FUNCTIONS ====================
+
+// Integer to string
+char *itoa(int value, char *str, int base) {
+    char *ptr = str, *ptr1 = str, tmp_char;
+    int tmp_value;
+
+    // Handle negative numbers for base 10
+    if (base == 10 && value < 0) {
+        *ptr++ = '-';
+        value = -value;
+        ptr1++;
+    }
+
+    // Convert number to string (reverse order)
+    do {
+        tmp_value = value;
+        value /= base;
+        *ptr++ = "0123456789abcdef"[tmp_value - value * base];
+    } while (value);
+
+    // Add null terminator
+    *ptr-- = '\0';
+
+    // Reverse the string
+    while (ptr1 < ptr) {
+        tmp_char = *ptr;
+        *ptr-- = *ptr1;
+        *ptr1++ = tmp_char;
+    }
+
+    return str;
+}
+
+// String to integer
+int atoi(const char *str) {
+    int result = 0;
+    int sign = 1;
+
+    // Handle sign
+    if (*str == '-') {
+        sign = -1;
+        str++;
+    } else if (*str == '+') {
+        str++;
+    }
+
+    // Convert digits
+    while (*str >= '0' && *str <= '9') {
+        result = result * 10 + (*str - '0');
+        str++;
+    }
+
+    return sign * result;
+}
+
+// ==================== BIT OPERATION FUNCTIONS ====================
+
+// Count set bits in a number
+uint8_t count_bits(uint32_t num) {
+    uint8_t count = 0;
+    while (num) {
+        count += num & 1;
+        num >>= 1;
+    }
+    return count;
+}
+
+// Reverse bits in a byte
+uint8_t reverse_bits(uint8_t num) {
+    num = (num & 0xF0) >> 4 | (num & 0x0F) << 4;
+    num = (num & 0xCC) >> 2 | (num & 0x33) << 2;
+    num = (num & 0xAA) >> 1 | (num & 0x55) << 1;
+    return num;
+}
+
+// Check if number is a power of two
+uint8_t is_power_of_two(uint32_t num) {
+    return num && !(num & (num - 1));
+}
+
+// ==================== MATH FUNCTIONS ====================
+
+// Absolute value
+int abs(int x) {
+    return x < 0 ? -x : x;
+}
+
+// Minimum of two numbers
+int min(int a, int b) {
+    return a < b ? a : b;
+}
+
+// Maximum of two numbers
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+
+// Map a value from one range to another
+long map(long x, long in_min, long in_max, long out_min, long out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+// ==================== CRC FUNCTIONS ====================
+
+// Simple CRC-8 calculation
+uint8_t crc8(const uint8_t *data, size_t length) {
+    uint8_t crc = 0xFF;
+    for (size_t i = 0; i < length; i++) {
+        crc ^= data[i];
+        for (uint8_t bit = 0; bit < 8; bit++) {
+            if (crc & 0x80) {
+                crc = (crc << 1) ^ 0x07;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
+    return crc;
+}
+
+// ==================== DEBUG FUNCTIONS ====================
+
+// Simple printf-like function for debugging (very basic)
+void debug_printf(const char *format, ...) {
+    // This is a placeholder - you would implement this based on your output
+    // For example, send via USART to a terminal
+    (void)format; // Avoid unused parameter warning
+}
+
+// Hex dump function for debugging
+void hex_dump(const uint8_t *data, size_t length) {
+    for (size_t i = 0; i < length; i++) {
+        if (i % 16 == 0) {
+            debug_printf("\n%04X: ", i);
+        }
+        debug_printf("%02X ", data[i]);
+    }
+    debug_printf("\n");
+}
+
+// ==================== SYSTEM FUNCTIONS ====================
+
+// Get system clock frequency (simplified)
+uint32_t SystemCoreClock = 16000000; // Default 16MHz
+
+// System reset
+void system_reset(void) {
+    // Use ARM system control block reset
+    SCB->AIRCR = (0x5FA << 16) | (1 << 2);
+}
+
+// Enable interrupts globally
+void enable_irq(void) {
+    __asm__ volatile ("cpsie i");
+}
+
+// Disable interrupts globally
+void disable_irq(void) {
+    __asm__ volatile ("cpsid i");
+}
+
+// Wait for interrupt
+void wait_for_interrupt(void) {
+    __asm__ volatile ("wfi");
+}
+
+// ==================== LED FUNCTIONS (Discovery Board) ====================
+
+// Control onboard LEDs
+void led_on(uint8_t led) {
+    switch (led) {
+        case LED_GREEN:
+            GPIO_SetPin(GPIOD, LED_GREEN_PIN);
+            break;
+        case LED_ORANGE:
+            GPIO_SetPin(GPIOD, LED_ORANGE_PIN);
+            break;
+        case LED_RED:
+            GPIO_SetPin(GPIOD, LED_RED_PIN);
+            break;
+        case LED_BLUE:
+            GPIO_SetPin(GPIOD, LED_BLUE_PIN);
+            break;
+    }
+}
+
+void led_off(uint8_t led) {
+    switch (led) {
+        case LED_GREEN:
+            GPIO_ResetPin(GPIOD, LED_GREEN_PIN);
+            break;
+        case LED_ORANGE:
+            GPIO_ResetPin(GPIOD, LED_ORANGE_PIN);
+            break;
+        case LED_RED:
+            GPIO_ResetPin(GPIOD, LED_RED_PIN);
+            break;
+        case LED_BLUE:
+            GPIO_ResetPin(GPIOD, LED_BLUE_PIN);
+            break;
+    }
+}
+
+void led_toggle(uint8_t led) {
+    switch (led) {
+        case LED_GREEN:
+            GPIO_TogglePin(GPIOD, LED_GREEN_PIN);
+            break;
+        case LED_ORANGE:
+            GPIO_TogglePin(GPIOD, LED_ORANGE_PIN);
+            break;
+        case LED_RED:
+            GPIO_TogglePin(GPIOD, LED_RED_PIN);
+            break;
+        case LED_BLUE:
+            GPIO_TogglePin(GPIOD, LED_BLUE_PIN);
+            break;
+    }
+}
+
+// Blink LED pattern
+void led_blink(uint8_t led, uint32_t delay_ms, uint8_t count) {
+    for (uint8_t i = 0; i < count; i++) {
+        led_on(led);
+        delay_ms(delay_ms);
+        led_off(led);
+        if (i < count - 1) {
+            delay_ms(delay_ms);
+        }
+    }
+}

@@ -1,0 +1,5 @@
+../Src/config.c:6:6:Config_Init	4	static
+../Src/config.c:11:6:Config_LoadDefaults	8	static
+../Src/config.c:17:6:Config_SaveToEEPROM	8	static
+../Src/config.c:23:6:Config_LoadFromEEPROM	8	static
+../Src/config.c:29:9:Config_ValidateSettings	4	static

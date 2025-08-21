@@ -1,0 +1,236 @@
+#include "main.h"
+#include "stdio.h"
+#include "string.h"
+#include "math.h"
+
+/* Private defines */
+#define PI 3.14159265358979323846f
+#define ASM330LHB_ADDRESS 0x6B
+
+/* IMU register definitions */
+#define ASM330LHB_WHO_AM_I      0x0F
+#define ASM330LHB_CTRL1_XL      0x10
+#define ASM330LHB_CTRL2_G       0x11
+#define ASM330LHB_OUTX_L_A      0x28
+#define ASM330LHB_OUTX_H_A      0x29
+#define ASM330LHB_OUTY_L_A      0x2A
+#define ASM330LHB_OUTY_H_A      0x2B
+#define ASM330LHB_OUTZ_L_A      0x2C
+#define ASM330LHB_OUTZ_H_A      0x2D
+
+/* Private variables */
+I2C_HandleTypeDef hi2c1;
+UART_HandleTypeDef huart3;  // Using USART3 on STM32F407G Discovery
+
+/* Private function prototypes */
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_I2C1_Init(void);
+static void MX_USART3_UART_Init(void);
+uint8_t IMU_Init(void);
+void IMU_ReadAccelerometer(float *ax, float *ay, float *az);
+void IMU_CalculateAngles(float ax, float ay, float az, float *pitch, float *roll);
+void SendIMUData(float pitch, float roll);
+
+int main(void)
+{
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+  MX_I2C1_Init();
+  MX_USART3_UART_Init();
+
+  /* Initialize IMU */
+  if (!IMU_Init())
+  {
+    Error_Handler();
+  }
+
+  float ax, ay, az;
+  float pitch, roll;
+  uint32_t lastTick = 0;
+
+  /* Main loop */
+  while (1)
+  {
+    /* Read and send IMU data every 500ms */
+    if (HAL_GetTick() - lastTick >= 500)
+    {
+      lastTick = HAL_GetTick();
+
+      IMU_ReadAccelerometer(&ax, &ay, &az);
+      IMU_CalculateAngles(ax, ay, az, &pitch, &roll);
+      SendIMUData(pitch, roll);
+    }
+  }
+}
+
+/* IMU Initialization */
+uint8_t IMU_Init(void)
+{
+  uint8_t whoami = 0;
+  uint8_t status = 1;
+
+  /* Read WHO_AM_I register */
+  if (HAL_I2C_Mem_Read(&hi2c1, ASM330LHB_ADDRESS << 1, ASM330LHB_WHO_AM_I,
+                       I2C_MEMADD_SIZE_8BIT, &whoami, 1, 100) != HAL_OK)
+  {
+    status = 0;
+  }
+
+  if (whoami != 0x6B)  // ASM330LHB WHO_AM_I value
+  {
+    status = 0;
+  }
+
+  /* Configure accelerometer (±2g, 104Hz ODR) */
+  uint8_t ctrl1_xl = 0x40; // 0100 0000: 104Hz, ±2g
+  if (HAL_I2C_Mem_Write(&hi2c1, ASM330LHB_ADDRESS << 1, ASM330LHB_CTRL1_XL,
+                        I2C_MEMADD_SIZE_8BIT, &ctrl1_xl, 1, 100) != HAL_OK)
+  {
+    status = 0;
+  }
+
+  /* Configure gyroscope (±250dps, 104Hz ODR) */
+  uint8_t ctrl2_g = 0x40; // 0100 0000: 104Hz, ±250dps
+  if (HAL_I2C_Mem_Write(&hi2c1, ASM330LHB_ADDRESS << 1, ASM330LHB_CTRL2_G,
+                        I2C_MEMADD_SIZE_8BIT, &ctrl2_g, 1, 100) != HAL_OK)
+  {
+    status = 0;
+  }
+
+  return status;
+}
+
+/* Read accelerometer data */
+void IMU_ReadAccelerometer(float *ax, float *ay, float *az)
+{
+  uint8_t data[6];
+
+  /* Read all 6 accelerometer output registers */
+  if (HAL_I2C_Mem_Read(&hi2c1, ASM330LHB_ADDRESS << 1, ASM330LHB_OUTX_L_A | 0x80,
+                       I2C_MEMADD_SIZE_8BIT, data, 6, 100) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* Combine LSB and MSB */
+  int16_t raw_x = (int16_t)((data[1] << 8) | data[0]);
+  int16_t raw_y = (int16_t)((data[3] << 8) | data[2]);
+  int16_t raw_z = (int16_t)((data[5] << 8) | data[4]);
+
+  /* Convert to g (for ±2g range, sensitivity is 0.061 mg/LSB) */
+  *ax = raw_x * 0.061f / 1000.0f;
+  *ay = raw_y * 0.061f / 1000.0f;
+  *az = raw_z * 0.061f / 1000.0f;
+}
+
+/* Calculate pitch and roll angles */
+void IMU_CalculateAngles(float ax, float ay, float az, float *pitch, float *roll)
+{
+  /* Calculate pitch (rotation around Y-axis) */
+  *pitch = atan2f(-ax, sqrtf(ay * ay + az * az)) * (180.0f / PI);
+
+  /* Calculate roll (rotation around X-axis) */
+  *roll = atan2f(ay, az) * (180.0f / PI);
+}
+
+/* Send data via UART */
+void SendIMUData(float pitch, float roll)
+{
+  char buffer[64];
+  int len = snprintf(buffer, sizeof(buffer), "Pitch: %.2f°, Roll: %.2f°\r\n", pitch, roll);
+  HAL_UART_Transmit(&huart3, (uint8_t *)buffer, len, 100);
+}
+
+/* Error handler */
+void Error_Handler(void)
+{
+  __disable_irq();
+  while (1)
+  {
+    /* Error handling code - could blink LED here */
+  }
+}
+
+/* System Clock Configuration */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  /** Configure the main internal regulator output voltage */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  /** Initializes the RCC Oscillators according to the specified parameters */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/* I2C1 Initialization */
+static void MX_I2C1_Init(void)
+{
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/* USART3 Initialization */
+static void MX_USART3_UART_Init(void)
+{
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/* GPIO Initialization */
+static void MX_GPIO_Init(void)
+{
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+}

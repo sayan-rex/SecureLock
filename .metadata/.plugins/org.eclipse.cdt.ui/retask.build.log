@@ -1,0 +1,10 @@
+01:10:41 **** Incremental Build of configuration Debug for project retask ****
+make -j4 all 
+arm-none-eabi-size  retask.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4808	    100	   1900	   6808	   1a98	retask.elf
+Finished building: default.size.stdout
+ 
+
+01:10:41 Build Finished. 0 errors, 0 warnings. (took 305ms)
+

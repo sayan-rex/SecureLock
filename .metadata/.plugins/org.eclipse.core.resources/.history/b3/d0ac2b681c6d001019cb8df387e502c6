@@ -1,0 +1,113 @@
+#include "main.h"
+#include <stdio.h>
+#include <math.h>
+#define PERIPH_BASE     0x40000000
+#define AHB1_OFFSET     0x00020000
+#define RCC_BASE        (PERIPH_BASE + AHB1_OFFSET + 0x3800)
+#define GPIOA_BASE      (PERIPH_BASE + 0x00020000)
+#define GPIOB_BASE      (PERIPH_BASE + 0x00020400)
+#define I2C1_BASE       (PERIPH_BASE + 0x00005400)
+#define USART2_BASE     (PERIPH_BASE + 0x00004400)
+#define PI 3.14159265f
+
+#define ASM330_ADDR     0x6A
+
+#define WHO_AM_I        0x0F
+#define CTRL1_XL        0x10
+#define CTRL2_G         0x11
+#define OUTX_L_A        0x28
+
+#define PI              3.14159265
+
+// Simple memory-mapped register definitions
+volatile uint32_t *RCC_AHB1ENR   = (uint32_t *)(RCC_BASE + 0x30);
+volatile uint32_t *RCC_APB1ENR   = (uint32_t *)(RCC_BASE + 0x40);
+volatile uint32_t *GPIOA_MODER   = (uint32_t *)(GPIOA_BASE + 0x00);
+volatile uint32_t *GPIOA_AFRL    = (uint32_t *)(GPIOA_BASE + 0x20);
+volatile uint32_t *USART2_SR     = (uint32_t *)(USART2_BASE + 0x00);
+volatile uint32_t *USART2_DR     = (uint32_t *)(USART2_BASE + 0x04);
+volatile uint32_t *USART2_BRR    = (uint32_t *)(USART2_BASE + 0x08);
+volatile uint32_t *USART2_CR1    = (uint32_t *)(USART2_BASE + 0x0C);
+
+void uart2_init(void) {
+    *RCC_AHB1ENR |= (1 << 0); // GPIOA
+    *RCC_APB1ENR |= (1 << 17); // USART2
+
+    *GPIOA_MODER &= ~(0xF << (2 * 2));   // Clear PA2, PA3
+    *GPIOA_MODER |= (0xA << (2 * 2));    // Set to Alternate
+    *GPIOA_AFRL &= ~(0xFF << (4 * 2));
+    *GPIOA_AFRL |= (0x77 << (4 * 2));    // AF7
+
+    *USART2_BRR = 0x0683;  // Baud = 115200 @ 16MHz
+    *USART2_CR1 |= (1 << 13) | (1 << 3) | (1 << 2);  // UE, TE, RE
+}
+
+void uart2_write(char c) {
+    while (!(*USART2_SR & (1 << 7)));  // wait for TXE
+    *USART2_DR = c;
+}
+
+void uart2_print(char *str) {
+    while (*str) uart2_write(*str++);
+}
+
+void delay_ms(uint32_t ms) {
+    for (volatile uint32_t i = 0; i < ms * 1600; i++);
+}
+
+// Dummy I2C1 functions (use your full I2C driver or bit-banged version)
+void i2c1_init(void) {
+    // [NOTE] Implement or use software I2C or minimal peripheral I2C init
+}
+void i2c1_start(void) {}
+void i2c1_write(uint8_t data) {}
+uint8_t i2c1_read_ack(void) { return 0; }
+uint8_t i2c1_read_nack(void) { return 0; }
+void i2c1_stop(void) {}
+
+int16_t read_word(uint8_t reg) {
+    // Send device address + reg + read 2 bytes
+    return 0; // placeholder
+}
+
+void float_to_string(float f, char *buf) {
+    int ipart = (int)f;
+    int fpart = (int)((f - ipart) * 100);
+    if (f < 0 && fpart > 0) fpart = -fpart;
+    sprintf(buf, "%d.%02d", ipart, fpart);
+}
+
+int main(void) {
+    uart2_init();
+    i2c1_init();
+
+    uart2_print("IMU init...\r\n");
+
+    // WHO_AM_I check (implement I2C read)
+    // uint8_t who = i2c_read_byte(ASM330_ADDR, WHO_AM_I);
+
+    while (1) {
+        int16_t ax = read_word(OUTX_L_A);
+        int16_t ay = read_word(OUTX_L_A + 2);
+        int16_t az = read_word(OUTX_L_A + 4);
+
+        float ax_g = ax / 16384.0f;
+        float ay_g = ay / 16384.0f;
+        float az_g = az / 16384.0f;
+
+        float pitch = atan2f(-ax_g, sqrtf(ay_g * ay_g + az_g * az_g)) * (180.0f / PI);
+        float roll  = atan2f(ay_g, az_g) * (180.0f / PI);
+
+        char pitch_str[16], roll_str[16];
+        float_to_string(pitch, pitch_str);
+        float_to_string(roll, roll_str);
+
+        uart2_print("Pitch: ");
+        uart2_print(pitch_str);
+        uart2_print(", Roll: ");
+        uart2_print(roll_str);
+        uart2_print("\r\n");
+
+        delay_ms(500);
+    }
+}

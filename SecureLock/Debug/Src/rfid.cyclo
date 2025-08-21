@@ -1,0 +1,11 @@
+../Src/rfid.c:6:6:RFID_Init	2
+../Src/rfid.c:54:9:RFID_Transfer	3
+../Src/rfid.c:68:6:RFID_WriteRegister	1
+../Src/rfid.c:77:9:RFID_ReadRegister	1
+../Src/rfid.c:90:5:RFID_CheckForCard	7
+../Src/rfid.c:122:9:RFID_TransceiveData	11
+../Src/rfid.c:177:6:RFID_Halt	1
+../Src/rfid.c:187:9:RFID_CalculateCRC	5
+../Src/rfid.c:213:5:RFID_IsNewCardPresent	1
+../Src/rfid.c:223:5:RFID_ReadCardSerial	1
+../Src/rfid.c:228:5:RFID_SimpleCheckForCard	8

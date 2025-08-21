@@ -1,0 +1,11 @@
+#ifndef RFID_H
+#define RFID_H
+
+#include <stdint.h>
+
+void RFID_Init(void);
+void RFID_InitSequence(void);
+uint8_t RFID_Transfer(uint8_t data);
+int RFID_CheckForCard(uint8_t *uid, uint8_t *uid_size);
+
+#endif // RFID_H

@@ -1,0 +1,32 @@
+# STM32CubeIDE generated files
+.mxproject
+.cproject
+.project
+.settings/
+
+# Build outputs
+Debug/
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+
+# Object files
+*.o
+*.d
+*.su
+
+# CMSIS (already in STM32CubeIDE installation)
+Drivers/
+
+# Startup (auto-generated)
+Startup/
+
+# Linker script (auto-generated)
+STM32F407VGTX_FLASH.ld
+
+# Temporary files
+*.tmp
+*.swp
+*~

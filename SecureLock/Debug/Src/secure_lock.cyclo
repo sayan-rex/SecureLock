@@ -1,0 +1,14 @@
+../Src/secure_lock.c:46:6:SecureLock_Init	1
+../Src/secure_lock.c:60:6:SecureLock_Run	8
+../Src/secure_lock.c:99:6:SecureLock_ProcessRFID	2
+../Src/secure_lock.c:116:6:SecureLock_ProcessPIN	4
+../Src/secure_lock.c:134:9:SecureLock_ValidateRFID	3
+../Src/secure_lock.c:143:9:SecureLock_ValidatePIN	1
+../Src/secure_lock.c:156:6:SecureLock_GrantAccess	1
+../Src/secure_lock.c:178:6:SecureLock_DenyAccess	1
+../Src/secure_lock.c:188:6:SecureLock_ResetSession	1
+../Src/secure_lock.c:196:6:SecureLock_LogAccess	3
+../Src/secure_lock.c:215:6:SecureLock_RemoteUnlock	2
+../Src/secure_lock.c:223:6:SecureLock_SendAccessLogs	1
+../Src/secure_lock.c:229:9:SecureLock_GetFailedAttempts	1
+../Src/secure_lock.c:233:14:SecureLock_GetLastError	1

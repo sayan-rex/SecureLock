@@ -1,0 +1,32 @@
+#ifndef MAIN_H
+#define MAIN_H
+
+#include "config.h"
+
+// Function prototypes
+void System_Init(void);
+void System_Run(void);
+void System_ErrorHandler(error_code_t error);
+void system_reset(void);
+
+// State handlers
+void Handle_IdleState(void);
+void Handle_RFIDScanningState(void);
+void Handle_PINEntryState(void);
+void Handle_AuthenticatingState(void);
+void Handle_AccessGrantedState(void);
+void Handle_AccessDeniedState(void);
+void Handle_LockoutState(void);
+void Handle_MaintenanceState(void);
+void Handle_ErrorState(void);
+
+// Maintenance functions
+void Enter_MaintenanceMode(void);
+void Exit_MaintenanceMode(void);
+void Maintenance_Operations(void);
+
+// Utility functions
+void Send_SystemStatus(void);
+void Check_MaintenanceModeTrigger(void);
+
+#endif // MAIN_H

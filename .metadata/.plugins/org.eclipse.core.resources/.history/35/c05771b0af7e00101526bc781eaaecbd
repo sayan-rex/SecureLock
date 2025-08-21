@@ -1,0 +1,18 @@
+/*
+ * keypad.h
+ *
+ *  Created on: Aug 21, 2025
+ *      Author: PC
+ */
+
+#ifndef KEYPAD_H_
+#define KEYPAD_H_
+
+#include <stdint.h>
+
+void Keypad_Init(void);
+char Keypad_GetKey(void);
+int Keypad_GetPIN(char *buffer, int length, uint32_t timeout);
+
+
+#endif /* KEYPAD_H_ */

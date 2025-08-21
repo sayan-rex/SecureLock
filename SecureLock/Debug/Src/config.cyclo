@@ -1,0 +1,5 @@
+../Src/config.c:6:6:Config_Init	1
+../Src/config.c:11:6:Config_LoadDefaults	1
+../Src/config.c:17:6:Config_SaveToEEPROM	1
+../Src/config.c:23:6:Config_LoadFromEEPROM	1
+../Src/config.c:29:9:Config_ValidateSettings	1

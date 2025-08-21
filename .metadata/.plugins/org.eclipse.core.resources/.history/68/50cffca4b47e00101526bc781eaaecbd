@@ -1,0 +1,13 @@
+#ifndef WIFI_H
+#define WIFI_H
+
+#include <stdint.h>
+
+void WIFI_Init(void);
+void WIFI_SendChar(char c);
+char WIFI_ReceiveChar(void);
+void WIFI_SendString(const char *str);
+int WIFI_SendCommand(const char *cmd, uint32_t timeout);
+void WIFI_SendLog(const char *message);
+
+#endif // WIFI_H
