@@ -1,6 +1,6 @@
 # SecureLock - STM32F407 Bare Metal Access Control System
 
-A secure door lock system implementing two-factor authentication using STM32F407, RFID, and matrix keypad with encrypted WiFi communication - written in **pure bare-metal embedded C** without any HAL libraries.
+A secure door lock system implementing two-factor authentication using STM32F407, RFID, and matrix keypad with encrypted WiFi communication.
 
 ## Features
 
