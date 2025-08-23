@@ -1,27 +1,25 @@
-name: Makefile CI
+name: Build SecureLock
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: configure
-      run: ./configure
+    - name: Install ARM Toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-none-eabi
 
-    - name: Install dependencies
-      run: make
+    - name: Build project
+      run: |
+        make -j4 all
 
-    - name: Run check
-      run: make check
-
-    - name: Run distcheck
-      run: make distcheck
+    - name: Check build artifacts
+      run: |
+        ls -la Build/
+        file Build/SecureLock.elf
