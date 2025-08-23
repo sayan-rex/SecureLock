@@ -1,3 +1,6 @@
+# Eclipse workspace metadata
+.metadata/
+
 # STM32CubeIDE settings
 .settings/
 
@@ -7,10 +10,15 @@ debug/
 Release/
 release/
 
-# Object files and other build artifacts
+# Object files and build artifacts
 *.o
 *.d
 *.elf
 *.bin
 *.hex
 *.map
+
+# Local test folders
+mx_test/
+retask/
+test/
