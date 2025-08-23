@@ -1,4 +1,4 @@
-# 🔒 SecureLock - STM32F407 Bare Metal Access Control System
+# SecureLock - STM32F407 Bare Metal Access Control System
 
 [![STM32](https://img.shields.io/badge/STM32-F407-blue.svg)](https://www.st.com/)
 [![Bare Metal](https://img.shields.io/badge/Bare-Metal-green.svg)](https://en.wikipedia.org/wiki/Bare_machine)
